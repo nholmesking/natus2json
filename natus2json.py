@@ -126,6 +126,28 @@ def sepList(lstr):
     return rd
 
 
+dt_fields = ['HBCalDate']
+bool_fields = ['PatientStatus.Normal',
+               'PatientStatus.MentallyChallenged',
+               'PatientStatus.Awake',
+               'PatientStatus.Drowsy',
+               'PatientStatus.Asleep',
+               'PatientStatus.Uncooperative',
+               'PatientStatus.Tense',
+               'PatientStatus.Confused',
+               'PatientStatus.BehaviorDifficulty',
+               'PatientStatus.Aphasic',
+               'PatientStatus.SemiComa',
+               'PatientStatus.Coma',
+               'PatientStatus.StatusEpilepticus',
+               'HBIsCalibrated',
+               'ShowWaveforms',
+               'ReadOnly',
+               'Deleted',
+               'IsDoneScanning',
+               'UseCreator']
+
+
 def sepKeyTree(lstr):
     """
     Take a string of a Natus key tree and return a Python dict.
@@ -161,6 +183,17 @@ def sepKeyTree(lstr):
                     else:
                         try:
                             rd[s] = int(t)
+                            if s in dt_fields:
+                                rd[s] = datetime.\
+                                        strftime(datetime.fromtimestamp
+                                                 (int(toInt(natus[20:24])),
+                                                  tz=timezone.utc),
+                                                 '%Y-%m-%dT%H:%M:%SZ')
+                            elif s in bool_fields:
+                                if t == 0:
+                                    rd[s] = False
+                                else:
+                                    rd[s] = True
                         except TypeError:
                             try:
                                 rd[s] = float(t)
@@ -216,6 +249,8 @@ def listToString(ind, numTabs):
             r += ',\n' + '\t' * numTabs + str(ind[a])
         elif type(ind[a]) is str:
             r += ',\n' + '\t' * numTabs + '"' + ind[a] + '"'
+        elif type(ind[a]) is bool:
+            r += ',\n' + '\t' * numTabs + str(ind[a]).lower()
         elif type(ind[a]) is list:
             r += ',\n' + '\t' * numTabs + '['
             r += listToString(ind[a], numTabs + 1)
@@ -238,6 +273,8 @@ def dictToString(ind, numTabs):
     for a in ind:
         if type(ind[a]) is int or type(ind[a]) is float:
             r += ',\n' + '\t' * numTabs + '"' + a + '": ' + str(ind[a])
+        elif type(ind[a]) is bool:
+            r += ',\n' + '\t' * numTabs + '"' + a + '": ' + str(ind[a]).lower()
         elif type(ind[a]) is str:
             r += ',\n' + '\t' * numTabs + '"' + a + '": "' + ind[a] + '"'
         elif type(ind[a]) is list:
