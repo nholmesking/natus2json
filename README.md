@@ -1,0 +1,1 @@
+Converts Natus files into JSON format.
