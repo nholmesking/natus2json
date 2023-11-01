@@ -6,7 +6,8 @@ from datetime import datetime
 from datetime import timezone
 
 """
-WORK IN PROGRESS
+WORK IN PROGRESS. TO-DO:
+- Conversion Factor
 
 Command-line arguments:
 1. input filename
@@ -413,6 +414,33 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[578:588]))
         jsonfile.write('",\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[588:592]))
+        jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
+        j = 592
+        while j < len(natus):
+            jsonfile.write('\n\t\t{')
+            jsonfile.write('\n\t\t\t"event_byte": ')
+            jsonfile.write(toInt(natus[j:j+1]))
+            j += 1
+            jsonfile.write(',\n\t\t\t"delta_information": ')
+            i = j
+            r = []
+            for i in range(num_channels):
+                r.append(int(toInt(natus[j+i:j+i+1])))
+            j += num_channels
+            for i in range(len(r)):
+                if r[i] == -128:
+                    r[i] = int(toInt(natus[j:j+4]))
+                    j += 4
+            s = '['
+            for i in range(len(r)):
+                s += '\n\t\t\t\t' + str(r[i]) + ','
+            s = s[:len(s)-1]
+            s += '\n\t\t\t]'
+            jsonfile.write(s)
+            jsonfile.write('\n\t\t}')
+            if j < len(natus):
+                jsonfile.write(',')
+        jsonfile.write('\n\t]')
     if file_schema == 6 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         jsonfile.write(toInt(natus[352:360]))
@@ -455,11 +483,39 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[962:972]))
         jsonfile.write('",\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[972:976]))
+        jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
+        j = 976
+        while j < len(natus):
+            jsonfile.write('\n\t\t{')
+            jsonfile.write('\n\t\t\t"event_byte": ')
+            jsonfile.write(toInt(natus[j:j+1]))
+            j += 1
+            jsonfile.write(',\n\t\t\t"delta_information": ')
+            i = j
+            r = []
+            for i in range(num_channels):
+                r.append(int(toInt(natus[j+i:j+i+1])))
+            j += num_channels
+            for i in range(len(r)):
+                if r[i] == -128:
+                    r[i] = int(toInt(natus[j:j+4]))
+                    j += 4
+            s = '['
+            for i in range(len(r)):
+                s += '\n\t\t\t\t' + str(r[i]) + ','
+            s = s[:len(s)-1]
+            s += '\n\t\t\t]'
+            jsonfile.write(s)
+            jsonfile.write('\n\t\t}')
+            if j < len(natus):
+                jsonfile.write(',')
+        jsonfile.write('\n\t]')
     if file_schema == 7 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         jsonfile.write(toInt(natus[352:360]))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
+        num_channels = int(toInt(natus[360:364]))
         jsonfile.write(',\n\t"m_deltabits": ')
         jsonfile.write(toInt(natus[364:368]))
         jsonfile.write(',\n\t"m_phys_chan": ')
@@ -495,8 +551,35 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[4536:4546]))
         jsonfile.write('",\n\t"m_dsp_sw_version": "')
         jsonfile.write(encode(natus[4546:4556]))
-        jsonfile.write('",\n\t"m_discardbits": ')
+        jsonfile.write(',\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[4556:4560]))
+        jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
+        j = 4560
+        while j < len(natus):
+            jsonfile.write('\n\t\t{')
+            jsonfile.write('\n\t\t\t"event_byte": ')
+            jsonfile.write(toInt(natus[j:j+1]))
+            j += 1
+            jsonfile.write(',\n\t\t\t"delta_information": ')
+            i = j
+            r = []
+            for i in range(num_channels):
+                r.append(int(toInt(natus[j+i:j+i+1])))
+            j += num_channels
+            for i in range(len(r)):
+                if r[i] == -128:
+                    r[i] = int(toInt(natus[j:j+4]))
+                    j += 4
+            s = '['
+            for i in range(len(r)):
+                s += '\n\t\t\t\t' + str(r[i]) + ','
+            s = s[:len(s)-1]
+            s += '\n\t\t\t]'
+            jsonfile.write(s)
+            jsonfile.write('\n\t\t}')
+            if j < len(natus):
+                jsonfile.write(',')
+        jsonfile.write('\n\t]')
     if file_schema == 8 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         jsonfile.write(toInt(natus[352:360]))
