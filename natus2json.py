@@ -260,8 +260,8 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[16:20]))
         jsonfile.write(',\n\t"m_creation_time": "')
         jsonfile.write(datetime.strftime(
-            datetime.fromtimestamp(int(toInt(natus[20:24]))),
-            '%Y-%m-%d %H:%M:%S'))
+            datetime.fromtimestamp(int(toInt(natus[20:24])), tz=timezone.utc),
+            '%Y-%m-%dT%H:%M:%SZ'))
         jsonfile.write('",\n\t"m_product_version_high": ')
         jsonfile.write(toInt(natus[24:28]))
         jsonfile.write(',\n\t"m_product_version_low": ')
@@ -287,8 +287,8 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[18:20]))
         jsonfile.write(',\n\t"m_creation_time": "')
         jsonfile.write(datetime.strftime(
-            datetime.fromtimestamp(int(toInt(natus[20:24]))),
-            '%Y-%m-%d %H:%M:%S'))
+            datetime.fromtimestamp(int(toInt(natus[20:24])), tz=timezone.utc),
+            '%Y-%m-%dT%H:%M:%SZ'))
         jsonfile.write('",\n\t"m_patient_id": ')
         jsonfile.write(toInt(natus[24:28]))
         jsonfile.write(',\n\t"m_study_id": ')
@@ -668,8 +668,8 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[42:46]))
         jsonfile.write(',\n\t\t"StartTime": "')
         jsonfile.write(datetime.strftime(
-            datetime.fromtimestamp(int(toInt(natus[46:50]))),
-            '%Y-%m-%d %H:%M:%S'))
+            datetime.fromtimestamp(int(toInt(natus[46:50])), tz=timezone.utc),
+            '%Y-%m-%dT%H:%M:%SZ'))
         jsonfile.write('",\n\t\t"SleepTimeBase": ')
         jsonfile.write(toInt(natus[50:54]))
         jsonfile.write(',\n\t\t"Valid": ')
@@ -679,8 +679,8 @@ def natus2json(filename, jsonname):
             jsonfile.write('true')
         jsonfile.write(',\n\t\t"CreationTime": "')
         jsonfile.write(datetime.strftime(
-            datetime.fromtimestamp(int(toInt(natus[55:59]))),
-            '%Y-%m-%d %H:%M:%S'))
+            datetime.fromtimestamp(int(toInt(natus[55:59])), tz=timezone.utc),
+            '%Y-%m-%dT%H:%M:%SZ'))
         jsonfile.write('",\n\t\t"CurrentStageName": "')
         j = 59
         while natus[j] != 0:
