@@ -177,7 +177,33 @@ def sepKeyTree(lstr):
         elif k == 1:
             t += lstr[i]
     rd[s] = t
-    return rd
+    return sepDots(rd)
+
+
+def sepDots(ind):
+    """
+    For key trees: split indexes with dots in the name into nested dicts.
+    Supports up to 3 levels.
+    """
+    for a in ind:
+        if type(ind[a]) is dict:
+            ind[a] = sepDots(ind[a])
+        else:
+            if '.' in a:
+                sp = a.split('.')
+                try:
+                    ind[sp[0]]
+                except KeyError:
+                    ind[sp[0]] = {}
+                if len(sp) == 2:
+                    ind[sp[0]][sp[1]] = ind[a]
+                elif len(sp) == 3:
+                    try:
+                        ind[sp[0]][sp[1]]
+                    except KeyError:
+                        ind[sp[0]][sp[1]] = {}
+                    ind[sp[0]][sp[1]][sp[2]] = ind[a]
+                del ind[a]
 
 
 def listToString(ind, numTabs):
