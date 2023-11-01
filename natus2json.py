@@ -621,9 +621,25 @@ def natus2json(filename, jsonname):
                               + str(r[i] * ((5e6 / (2 ** 10 - 0.5)) / 2 ** 6)
                                     * 2 ** discardbits) + ',')
             elif headbox_type == 8:
-                pass  # WORK IN PROGRESS
+                for i in range(len(r)):
+                    if i in range(0, 25):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(25, 27):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
             elif headbox_type == 9:
-                pass  # WORK IN PROGRESS
+                for i in range(len(r)):
+                    if i in range(0, 33):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(33, 35):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
             jsonfile.write(s)
@@ -756,9 +772,25 @@ def natus2json(filename, jsonname):
                               + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
                                     discardbits) + ',')
             elif headbox_type == 8:
-                pass  # WORK IN PROGRESS
+                for i in range(len(r)):
+                    if i in range(0, 25):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(25, 27):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
             elif headbox_type == 9:
-                pass  # WORK IN PROGRESS
+                for i in range(len(r)):
+                    if i in range(0, 33):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(33, 35):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
             jsonfile.write(s)
@@ -892,9 +924,25 @@ def natus2json(filename, jsonname):
                               + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
                                     discardbits) + ',')
             elif headbox_type == 8:
-                pass  # WORK IN PROGRESS
+                for i in range(len(r)):
+                    if i in range(0, 25):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(25, 27):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
             elif headbox_type == 9:
-                pass  # WORK IN PROGRESS
+                for i in range(len(r)):
+                    if i in range(0, 33):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(33, 35):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
             jsonfile.write(s)
