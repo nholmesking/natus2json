@@ -542,7 +542,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(',\n\t"m_shorted": ')
         s = '['
         for j in range(1024):
-            s += '\n\t\t' + toInt(natus[4560 + j * 2:4560 + (j + 1) * 2]) + ','
+            s += '\n\t\t' + str(bool(natus[4561 + j * 2])).lower() + ','
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
@@ -598,7 +598,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(',\n\t"m_shorted": ')
         s = '['
         for j in range(1024):
-            s += '\n\t\t' + toInt(natus[4560 + j * 2:4560 + (j + 1) * 2]) + ','
+            s += '\n\t\t' + str(bool(natus[4561 + j * 2])).lower() + ','
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
