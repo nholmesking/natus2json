@@ -470,6 +470,12 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[568:578]))
         jsonfile.write('",\n\t"m_dsp_sw_version": "')
         jsonfile.write(encode(natus[578:588]))
+        sw = encode(natus[578:588]).split('.')
+        sw1 = int(sw[0])
+        if len(sw) > 1:
+            sw2 = int(sw[1])
+        else:
+            sw2 = 0
         jsonfile.write('",\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[588:592]))
         discardbits = int(toInt(natus[588:592]))
@@ -504,10 +510,46 @@ def natus2json(filename, jsonname):
                                     discardbits) + ',')
                     elif i in range(24, 28):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
+                              + str(r[i] * ((5e6 / (2 ** 10 - 0.5)) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+            elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
                                     discardbits) + ',')
-            elif headbox_type == 5:
-                pass  # WORK IN PROGRESS
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
+            elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
             elif headbox_type == 6:
                 for i in range(len(r)):
                     if i in range(0, 32):
@@ -515,9 +557,9 @@ def natus2json(filename, jsonname):
                               + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
                                     discardbits) + ',')
                     elif i in range(32, 36):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((5e6 / (2 ** 10 - 0.5)) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
             elif headbox_type == 8:
                 pass  # WORK IN PROGRESS
             elif headbox_type == 9:
@@ -605,8 +647,44 @@ def natus2json(filename, jsonname):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
                               + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
                                     discardbits) + ',')
-            elif headbox_type == 5:
-                pass  # WORK IN PROGRESS
+            elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
+            elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
             elif headbox_type == 6:
                 for i in range(len(r)):
                     if i in range(0, 32):
@@ -705,8 +783,44 @@ def natus2json(filename, jsonname):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
                               + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
                                     discardbits) + ',')
-            elif headbox_type == 5:
-                pass  # WORK IN PROGRESS
+            elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
+            elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
             elif headbox_type == 6:
                 for i in range(len(r)):
                     if i in range(0, 32):
