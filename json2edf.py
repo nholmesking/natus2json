@@ -53,23 +53,23 @@ def json2edf(jsonname, edfname):
     for b in li:  # label
         edffile.write(rightpad(b, 16))
         channels.append(b)
-    for b in li:
+    for b in li:  # transducer type
         edffile.write(' ' * 80)  # PLACEHOLDER
-    for b in li:
+    for b in li:  # physical dimension
+        edffile.write('uV      ')
+    for b in li:  # physical minimum
         edffile.write(' ' * 8)  # PLACEHOLDER
-    for b in li:
+    for b in li:  # physical maximum
         edffile.write(' ' * 8)  # PLACEHOLDER
-    for b in li:
+    for b in li:  # digital minimum
         edffile.write(' ' * 8)  # PLACEHOLDER
-    for b in li:
+    for b in li:  # digital maximum
         edffile.write(' ' * 8)  # PLACEHOLDER
-    for b in li:
-        edffile.write(' ' * 8)  # PLACEHOLDER
-    for b in li:
+    for b in li:  # prefiltering
         edffile.write(' ' * 80)  # PLACEHOLDER
-    for b in li:
+    for b in li:  # number of samples in each record
         edffile.write(' ' * 8)  # PLACEHOLDER
-    for b in li:
+    for b in li:  # reserved
         edffile.write(' ' * 32)  # PLACEHOLDER
     for a in jinp['packets']:  # DATA RECORDS
         for b in channels:
