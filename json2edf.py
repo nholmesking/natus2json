@@ -48,6 +48,17 @@ def json2edf(jsonname, edfname):
     edffile.write(' ' * 8)  # PLACEHOLDER, number of data records
     edffile.write(' ' * 8)  # PLACEHOLDER, duration of a data record
     edffile.write(rightpad(str(jinp['m_num_channels']), 8))
+    for b in jinp['packets'][0]['delta_information']:
+        edffile.write(rightpad(b, 16))
+        edffile.write(' ' * 80)  # PLACEHOLDER
+        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(' ' * 80)  # PLACEHOLDER
+        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(' ' * 32)  # PLACEHOLDER
     # MORE CODE HERE
     edffile.close()
 
