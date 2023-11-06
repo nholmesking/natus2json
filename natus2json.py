@@ -548,10 +548,12 @@ def natus2json(filename, jsonname):
             j += 1
             jsonfile.write(',\n\t\t\t"delta_information": ')
             i = j
+            # Delta information
             r = []
             for i in range(num_channels):
                 r.append(int(toInt(natus[j+i:j+i+1])))
             j += num_channels
+            # Absolute channel values
             for i in range(len(r)):
                 if r[i] == -128:
                     r[i] = int(toInt(natus[j:j+4]))
@@ -699,10 +701,12 @@ def natus2json(filename, jsonname):
             j += 1
             jsonfile.write(',\n\t\t\t"delta_information": ')
             i = j
+            # Delta information
             r = []
             for i in range(num_channels):
                 r.append(int(toInt(natus[j+i:j+i+1])))
             j += num_channels
+            # Absolute channel values
             for i in range(len(r)):
                 if r[i] == -128:
                     r[i] = int(toInt(natus[j:j+4]))
@@ -851,10 +855,12 @@ def natus2json(filename, jsonname):
             j += 1
             jsonfile.write(',\n\t\t\t"delta_information": ')
             i = j
+            # Delta information
             r = []
             for i in range(num_channels):
                 r.append(int(toInt(natus[j+i:j+i+1])))
             j += num_channels
+            # Absolute channel values
             for i in range(len(r)):
                 if r[i] == -128:
                     r[i] = int(toInt(natus[j:j+4]))
@@ -1006,6 +1012,7 @@ def natus2json(filename, jsonname):
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
+        # TODO: Delta array
     if file_schema == 9 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         jsonfile.write(toInt(natus[352:360]))
@@ -1062,6 +1069,7 @@ def natus2json(filename, jsonname):
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
+        # TODO: Delta array
     if file_schema == 3 and fex == 'ent':
         jsonfile.write('\n\t"notes": [')  # "notes" not specified in doc
         j = 352
