@@ -34,6 +34,8 @@ def json2edf(jsonname, edfname):
     while len(s) < 80:
         s += ' '
     edffile.write(s[:80])
+    edffile.write(' ' * 80)  # PLACEHOLDER, local recording identification
+    # MORE CODE HERE
     edffile.close()
 
 
