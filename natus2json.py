@@ -48,7 +48,7 @@ def encode(char):
     Convert a list of bytes representing chars into a string.
     """
     s = ''
-    if sys.argc < 4 or sys.argv[3] == 'ascii':
+    if len(sys.argv) < 4 or sys.argv[3] == 'ascii':
         for a in char:
             s += chr(a)
     elif sys.argv[3] == 'utf8':
