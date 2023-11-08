@@ -45,7 +45,7 @@ def json2edf(jsonname, edfname):
     edffile.write(' ' * 8)  # PLACEHOLDER, starttime
     edffile.write(rightpad(str(256 + jinp['m_num_channels'] * 256), 8))
     edffile.write(' ' * 44)  # PLACEHOLDER, reserved
-    edffile.write(rightpad(str(jinp['packets']), 8))
+    edffile.write(rightpad(str(len(jinp['packets'])), 8))
     edffile.write(' ' * 8)  # PLACEHOLDER, duration of a data record
     edffile.write(rightpad(str(jinp['m_num_channels']), 4))
     channels = []
