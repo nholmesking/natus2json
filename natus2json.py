@@ -215,10 +215,11 @@ def sepKeyTree(lstr):
             elif paren == 2:
                 k = 1
             continue
-        if k == 0:
-            s += lstr[i]
-        elif k == 1:
-            t += lstr[i]
+        if paren == 2:
+            if k == 0:
+                s += lstr[i]
+            elif k == 1:
+                t += lstr[i]
     rd[s] = t
     return sepDots(rd)
 
