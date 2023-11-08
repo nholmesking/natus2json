@@ -1312,8 +1312,9 @@ def natus2json(filename, jsonname):
 
 def multipleFiles(indir, outdir):
     for f in os.listdir(indir):
-        natus2json(os.path.join(indir, f), os.path.join(outdir, f))
-        print('DONE', f)
+        if f[len(f)-3:] != 'avi':
+            natus2json(os.path.join(indir, f), os.path.join(outdir, f))
+            print('DONE', f)
 
 
 if __name__ == '__main__':
