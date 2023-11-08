@@ -9,8 +9,8 @@ from datetime import timezone
 WORK IN PROGRESS.
 
 Command-line arguments:
-1. input filename
-2. output filename
+1. input directory
+2. output directory
 3. source character encoding: "ascii", "utf8"
 
 PEP-8 compliant.
@@ -1313,5 +1313,11 @@ def natus2json(filename, jsonname):
     jsonfile.close()
 
 
+def multipleFiles(indir, outdir):
+    for f in os.listdir(indir):
+        natus2json(os.path.join(indir, f), os.path.join(outdir, f))
+        print('DONE', f)
+
+
 if __name__ == '__main__':
-    natus2json(sys.argv[1], sys.argv[2])
+    multipleFiles(sys.argv[1], sys.argv[2])
