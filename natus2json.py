@@ -82,6 +82,15 @@ def encode(char):
     return s
 
 
+def toGUID(inp):
+    s = ''
+    for i in range(16):
+        s += '{:02x}'.format(inp[i])
+        if i in [3, 5, 7, 9]:
+            s += '-'
+    return s
+
+
 def sepList(lstr):
     """
     Take a string of a Natus list and return a Python list.
@@ -431,10 +440,7 @@ def natus2json(filename, jsonname):
         file_schema = sn2
     if base_schema == 0 and fex != 'vtc':
         jsonfile.write('"m_file_guid": "')
-        for i in range(0, 16):
-            jsonfile.write('{:02x}'.format(natus[i]))
-            if i in [3, 5, 7, 9]:
-                jsonfile.write('-')
+        jsonfile.write(toGUID(natus[:16]))
         jsonfile.write('",\n\t"m_file_schema": ')
         jsonfile.write(toInt(natus[16:20]))
         jsonfile.write(',\n\t"m_creation_time": "')
@@ -456,10 +462,7 @@ def natus2json(filename, jsonname):
         jsonfile.write('"')
     if base_schema == 1 and fex != 'vtc':
         jsonfile.write('"m_file_guid": "')
-        for i in range(0, 16):
-            jsonfile.write('{:02x}'.format(natus[i]))
-            if i in [3, 5, 7, 9]:
-                jsonfile.write('-')
+        jsonfile.write(toGUID(natus[:16]))
         jsonfile.write('",\n\t"m_file_schema": ')
         jsonfile.write(toInt(natus[16:18]))
         jsonfile.write(',\n\t"m_base_schema": ')
@@ -1263,10 +1266,7 @@ def natus2json(filename, jsonname):
         jsonfile.write('"')
     if fex == 'vtc':
         jsonfile.write('"VTC": "')
-        for i in range(0, 16):
-            jsonfile.write('{:02x}'.format(natus[i]))
-            if i in [3, 5, 7, 9]:
-                jsonfile.write('-')
+        jsonfile.write(toGUID(natus[:16]))
         jsonfile.write(',\n\t"Schema": ')
         jsonfile.write(toInt(natus[16:20]))
         file_schema = int(toInt(natus[16:20]))
@@ -1293,14 +1293,11 @@ def natus2json(filename, jsonname):
         j = 20
         while j < len(natus):
             jsonfile.write('\n\t\t{')
-            jsonfile.write('\n\t\t\t"MpgFileName": ')
+            jsonfile.write('\n\t\t\t"MpgFileName": "')
             jsonfile.write(encode(natus[j:j+261]))
-            jsonfile.write('",\n\t\t\t"Location": ')
-            for i in range(j+261, j+277):
-                jsonfile.write('{:02x}'.format(natus[i]))
-                if i in [j+264, j+266, j+268, j+270]:
-                    jsonfile.write('-')
-            jsonfile.write(',\n\t\t\t"StartTime": ')
+            jsonfile.write('",\n\t\t\t"Location": "')
+            jsonfile.write(toGUID(natus[j+261:j+277]))
+            jsonfile.write('",\n\t\t\t"StartTime": ')
             jsonfile.write(toInt(natus[j+277:j+285]))
             jsonfile.write(',\n\t\t\t"EndTime": ')
             jsonfile.write(toInt(natus[j+285:j+293]))
