@@ -1273,7 +1273,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(s)
         j = 8656
         if j < len(natus):
-            jsonfile.write(',')
+            jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -1324,9 +1324,9 @@ def natus2json(filename, jsonname):
                 for i in range(len(r)):
                     while shorted[c]:
                         c += 1
-                    s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[c]] +
-                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
-                                            2 ** discardbits, 2)) + ',')
+                    s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[c]]
+                          + '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                              2 ** discardbits, 2)) + ',')
                     c += 1
             elif headbox_type == 4:
                 for i in range(len(r)):
@@ -1420,6 +1420,7 @@ def natus2json(filename, jsonname):
             jsonfile.write('\n\t\t}')
             if j < len(natus):
                 jsonfile.write(',')
+        jsonfile.write('\n\t]')
     if file_schema == 3 and fex == 'ent':
         jsonfile.write('\n\t"notes": [')  # "notes" not specified in doc
         j = 352
