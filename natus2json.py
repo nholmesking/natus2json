@@ -572,18 +572,18 @@ def natus2json(filename, jsonname):
             if headbox_type == 1 or headbox_type == 3:
                 for i in range(len(r)):
                     s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[i]] +
-                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                      discardbits) + ',')
+                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                            2 ** discardbits, 2)) + ',')
             elif headbox_type == 4:
                 for i in range(len(r)):
                     if i in range(0, 24):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(24, 28):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((5e6 / (2 ** 10 - 0.5)) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
@@ -731,18 +731,18 @@ def natus2json(filename, jsonname):
             if headbox_type == 1 or headbox_type == 3:
                 for i in range(len(r)):
                     s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[i]] +
-                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                      discardbits) + ',')
+                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                            2 ** discardbits, 2)) + ',')
             elif headbox_type == 4:
                 for i in range(len(r)):
                     if i in range(0, 24):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(24, 28):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
@@ -890,18 +890,18 @@ def natus2json(filename, jsonname):
             if headbox_type == 1 or headbox_type == 3:
                 for i in range(len(r)):
                     s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[i]] +
-                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                      discardbits) + ',')
+                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                            2 ** discardbits, 2)) + ',')
             elif headbox_type == 4:
                 for i in range(len(r)):
                     if i in range(0, 24):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(24, 28):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
@@ -1101,19 +1101,19 @@ def natus2json(filename, jsonname):
                     while shorted[c]:
                         c += 1
                     s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[c]] +
-                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                      discardbits) + ',')
+                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                            2 ** discardbits, 2)) + ',')
                     c += 1
             elif headbox_type == 4:
                 for i in range(len(r)):
                     if i in range(0, 24):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(24, 28):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
@@ -1187,8 +1187,8 @@ def natus2json(filename, jsonname):
                     while shorted[c]:
                         c += 1
                     s += ('\n\t\t\t\t"C' + str(c) +
-                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                      discardbits) + ',')
+                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                            2 ** discardbits, 2)) + ',')
                     c += 1
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
@@ -1315,19 +1315,19 @@ def natus2json(filename, jsonname):
                     while shorted[c]:
                         c += 1
                     s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[c]] +
-                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                      discardbits) + ',')
+                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                            2 ** discardbits, 2)) + ',')
                     c += 1
             elif headbox_type == 4:
                 for i in range(len(r)):
                     if i in range(0, 24):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(24, 28):
                         s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
@@ -1401,8 +1401,8 @@ def natus2json(filename, jsonname):
                     while shorted[c]:
                         c += 1
                     s += ('\n\t\t\t\t"C' + str(c) +
-                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                      discardbits) + ',')
+                          '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                            2 ** discardbits, 2)) + ',')
                     c += 1
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
@@ -1410,6 +1410,7 @@ def natus2json(filename, jsonname):
             jsonfile.write('\n\t\t}')
             if j < len(natus):
                 jsonfile.write(',')
+            print(j, len(natus))
     if file_schema == 3 and fex == 'ent':
         jsonfile.write('\n\t"notes": [')  # "notes" not specified in doc
         j = 352
