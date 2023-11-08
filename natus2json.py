@@ -23,12 +23,10 @@ def toInt(lst):
     Convert a list of bytes into an int, and then to a string.
     """
     t = 0
-    k = len(lst) - 1
     for i in range(len(lst)):
-        t += lst[i] * 2 ** (k * 8)
-        k -= 1
-    if lst[0] > 127:
-        t -= 2 ** (len(lst) * 8)
+        t += lst[i] * 2 ** (i * 8)
+    if lst[len(lst)-1] > 127:
+        t -= (2 ** (len(lst) * 8) - 1)
     return str(t)
 
 
@@ -126,10 +124,10 @@ def sepList(lstr):
             else:
                 try:
                     rl.append(int(s))
-                except TypeError:
+                except ValueError:
                     try:
                         rl.append(float(s))
-                    except TypeError:
+                    except ValueError:
                         rl.append(s)
                 s = ''
             continue
@@ -206,10 +204,10 @@ def sepKeyTree(lstr):
                                     rd[s] = False
                                 else:
                                     rd[s] = True
-                        except TypeError:
+                        except ValueError:
                             try:
                                 rd[s] = float(t)
-                            except TypeError:
+                            except ValueError:
                                 rd[s] = t
                     s = ''
                     t = ''
@@ -230,25 +228,27 @@ def sepDots(ind):
     For key trees: split indexes with dots in the name into nested dicts.
     Supports up to 3 levels.
     """
+    newind = {}
     for a in ind:
         if type(ind[a]) is dict:
             ind[a] = sepDots(ind[a])
-        else:
-            if '.' in a:
-                sp = a.split('.')
+        if '.' in a:
+            sp = a.split('.')
+            try:
+                newind[sp[0]]
+            except KeyError:
+                newind[sp[0]] = {}
+            if len(sp) == 2:
+                newind[sp[0]][sp[1]] = ind[a]
+            elif len(sp) == 3:
                 try:
-                    ind[sp[0]]
+                    newind[sp[0]][sp[1]]
                 except KeyError:
-                    ind[sp[0]] = {}
-                if len(sp) == 2:
-                    ind[sp[0]][sp[1]] = ind[a]
-                elif len(sp) == 3:
-                    try:
-                        ind[sp[0]][sp[1]]
-                    except KeyError:
-                        ind[sp[0]][sp[1]] = {}
-                    ind[sp[0]][sp[1]][sp[2]] = ind[a]
-                del ind[a]
+                    newind[sp[0]][sp[1]] = {}
+                newind[sp[0]][sp[1]][sp[2]] = ind[a]
+        else:
+            newind[a] = ind[a]
+    return newind
 
 
 def listToString(ind, numTabs):
@@ -430,8 +430,8 @@ def natus2json(filename, jsonname):
     jsonfile = open(jsonname, 'w')
     jsonfile.write('{\n\t')
     s = []
-    sn1 = natus[17]
-    sn2 = natus[19]
+    sn1 = natus[16]
+    sn2 = natus[18]
     if fex == 'vtc':
         base_schema = -1
         file_schema = -1
@@ -491,6 +491,7 @@ def natus2json(filename, jsonname):
         i = 352
         while natus[i] != 0:
             i += 1
+        print(encode(natus[352:]))
         t = sepKeyTree(encode(natus[352:i]))
         jsonfile.write(',' + dictToString(t, 1))
     if file_schema == 5 and fex == 'erd':
@@ -1007,7 +1008,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(',\n\t"m_shorted": ')
         s = '['
         for j in range(1024):
-            s += '\n\t\t' + str(bool(natus[4561 + j * 2])).lower() + ','
+            s += '\n\t\t' + str(bool(natus[4560 + j * 2])).lower() + ','
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
@@ -1064,7 +1065,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(',\n\t"m_shorted": ')
         s = '['
         for j in range(1024):
-            s += '\n\t\t' + str(bool(natus[4561 + j * 2])).lower() + ','
+            s += '\n\t\t' + str(bool(natus[4560 + j * 2])).lower() + ','
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
@@ -1089,7 +1090,7 @@ def natus2json(filename, jsonname):
             jsonfile.write(',\n\t\t\t"id": ')
             jsonfile.write(toInt(natus[j+12:j+16]))
             i = j + 16
-            while natus[i] != 0:
+            while i < len(natus) and natus[i] != 0:
                 i += 1
             t = sepKeyTree(encode(natus[j+16:i]))
             jsonfile.write(',' + dictToString(t, 3))
@@ -1171,7 +1172,7 @@ def natus2json(filename, jsonname):
             jsonfile.write(',\n\t\t\t"sample_span": ')
             jsonfile.write(toInt(natus[j+268:j+272]))
             jsonfile.write('\n\t\t}')
-            j += 272
+            j += 276
             if j < len(natus):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
@@ -1270,7 +1271,7 @@ def natus2json(filename, jsonname):
     if fex == 'vtc':
         jsonfile.write('"VTC": "')
         jsonfile.write(toGUID(natus[:16]))
-        jsonfile.write(',\n\t"Schema": ')
+        jsonfile.write('",\n\t"Schema": ')
         jsonfile.write(toInt(natus[16:20]))
         file_schema = int(toInt(natus[16:20]))
     if file_schema == 1 and fex == 'vtc':
