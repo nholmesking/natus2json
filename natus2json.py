@@ -424,6 +424,8 @@ def natus2json(filename, jsonname):
     Main function.
     """
     fex = filename[len(filename)-3:]
+    if fex == 'old':
+        fex = filename[len(filename)-7:len(filename)-4]
     infile = open(filename, 'rb')
     natus = infile.read()
     infile.close()
@@ -491,7 +493,6 @@ def natus2json(filename, jsonname):
         i = 352
         while natus[i] != 0:
             i += 1
-        print(encode(natus[352:]))
         t = sepKeyTree(encode(natus[352:i]))
         jsonfile.write(',' + dictToString(t, 1))
     if file_schema == 5 and fex == 'erd':
