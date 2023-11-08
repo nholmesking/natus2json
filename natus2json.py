@@ -551,6 +551,8 @@ def natus2json(filename, jsonname):
         discardbits = int(toInt(natus[588:592]))
         jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
         j = 592
+        if j < len(natus):
+            jsonfile.write(',')
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -710,6 +712,8 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[972:976]))
         jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
         j = 976
+        if j < len(natus):
+            jsonfile.write(',')
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -869,6 +873,8 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[4556:4560]))
         jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
         j = 4560
+        if j < len(natus):
+            jsonfile.write(',')
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -1050,6 +1056,8 @@ def natus2json(filename, jsonname):
         s += '\n\t]'
         jsonfile.write(s)
         j = 8656
+        if j < len(natus):
+            jsonfile.write(',')
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -1264,6 +1272,8 @@ def natus2json(filename, jsonname):
         s += '\n\t]'
         jsonfile.write(s)
         j = 8656
+        if j < len(natus):
+            jsonfile.write(',')
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -1410,7 +1420,6 @@ def natus2json(filename, jsonname):
             jsonfile.write('\n\t\t}')
             if j < len(natus):
                 jsonfile.write(',')
-            print(j, len(natus))
     if file_schema == 3 and fex == 'ent':
         jsonfile.write('\n\t"notes": [')  # "notes" not specified in doc
         j = 352
