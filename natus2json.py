@@ -21,6 +21,7 @@ PEP-8 compliant.
 def toInt(lst):
     """
     Convert a list of bytes into an int, and then to a string.
+    Assumes little-endian.
     """
     t = 0
     for i in range(len(lst)):
@@ -133,7 +134,7 @@ def sepList(lstr):
             continue
         s += lstr[i]
     rl.append(s)
-    return rd
+    return rl
 
 
 dt_fields = ['HBCalDate']
@@ -195,10 +196,10 @@ def sepKeyTree(lstr):
                             rd[s] = int(t)
                             if s in dt_fields:
                                 rd[s] = datetime.\
-                                        strftime(datetime.fromtimestamp
-                                                 (int(toInt(natus[20:24])),
-                                                  tz=timezone.utc),
-                                                 '%Y-%m-%dT%H:%M:%SZ')
+                                    strftime(datetime.
+                                             fromtimestamp(rd[s],
+                                                           tz=timezone.utc),
+                                             '%Y-%m-%dT%H:%M:%SZ')
                             elif s in bool_fields:
                                 if t == 0:
                                     rd[s] = False
@@ -501,6 +502,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[352:360]))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
+        num_channels = int(toInt(natus[360:364]))
         jsonfile.write(',\n\t"m_deltabits": ')
         jsonfile.write(toInt(natus[364:368]))
         jsonfile.write(',\n\t"m_phys_chan": ')
@@ -651,6 +653,11 @@ def natus2json(filename, jsonname):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
                               + str(r[i] * (1 / (2 ** 6)) * 2 **
                                     discardbits) + ',')
+            else:
+                for i in range(len(r)):
+                    s += ('\n\t\t\t\t"C' + str(i) +
+                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                      discardbits) + ',')
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
             jsonfile.write(s)
@@ -663,6 +670,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[352:360]))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
+        num_channels = int(toInt(natus[360:364]))
         jsonfile.write(',\n\t"m_deltabits": ')
         jsonfile.write(toInt(natus[364:368]))
         jsonfile.write(',\n\t"m_phys_chan": ')
@@ -804,6 +812,11 @@ def natus2json(filename, jsonname):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
                               + str(r[i] * (1 / (2 ** 6)) * 2 **
                                     discardbits) + ',')
+            else:
+                for i in range(len(r)):
+                    s += ('\n\t\t\t\t"C' + str(i) +
+                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                      discardbits) + ',')
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
             jsonfile.write(s)
@@ -958,6 +971,11 @@ def natus2json(filename, jsonname):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
                               + str(r[i] * (1 / (2 ** 6)) * 2 **
                                     discardbits) + ',')
+            else:
+                for i in range(len(r)):
+                    s += ('\n\t\t\t\t"C' + str(i) +
+                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                      discardbits) + ',')
             s = s[:len(s)-1]
             s += '\n\t\t\t}'
             jsonfile.write(s)
@@ -970,6 +988,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(toInt(natus[352:360]))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
+        num_channels = int(toInt(natus[360:364]))
         jsonfile.write(',\n\t"m_deltabits": ')
         jsonfile.write(toInt(natus[364:368]))
         jsonfile.write(',\n\t"m_phys_chan": ')
@@ -980,6 +999,7 @@ def natus2json(filename, jsonname):
         s += '\n\t]'
         jsonfile.write(s)
         jsonfile.write(',\n\t"m_headbox_type": ')
+        headbox_type = int(toInt(natus[4464:4468]))
         s = '['
         for j in range(4):
             s += '\n\t\t' + toInt(natus[4464 + j * 4:4464 + (j + 1) * 4]) + ','
@@ -1007,26 +1027,182 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[4546:4556]))
         jsonfile.write('",\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[4556:4560]))
+        discardbits = int(toInt(natus[4556:4560]))
         jsonfile.write(',\n\t"m_shorted": ')
+        shorted = []
+        num_shorted = 0
         s = '['
         for j in range(1024):
             s += '\n\t\t' + str(bool(natus[4560 + j * 2])).lower() + ','
+            shorted.append(bool(natus[4560 + j * 2]))
+            if bool(natus[4560 + j * 2]):
+                num_shorted += 1
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
         jsonfile.write(',\n\t"m_frequency_factor": ')
+        freqfac = False
         s = '['
         for j in range(1024):
             s += '\n\t\t' + toInt(natus[6608 + j * 2:6608 + (j + 1) * 2]) + ','
+            if int(toInt(natus[6608 + j * 2:6608 + (j + 1) * 2])) != 32767:
+                freqfac = True
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
-        # TODO: Delta array
+        j = 8656
+        while j < len(natus):
+            jsonfile.write('\n\t\t{')
+            jsonfile.write('\n\t\t\t"event_byte": ')
+            jsonfile.write(toInt(natus[j:j+1]))
+            j += 1
+            if freqfac:
+                jsonfile.write(',\n\t\t\t"frequency_byte": ')
+                jsonfile.write(toInt(natus[j:j+1]))
+                j += 1
+            delta_mask = []
+            for i in range(int(num_channels / 8 + 0.5)):
+                bits = []
+                nn = natus[j+i]
+                for k in range(8):
+                    if nn >= 2 ** (7-k):
+                        bits.insert(0, 1)
+                        nn -= 2 ** (7-k)
+                    else:
+                        bits.insert(0, 0)
+                for a in bits:
+                    delta_mask.append(a)
+            j += int(num_channels / 8 + 0.5)
+            jsonfile.write(',\n\t\t\t"delta_information": ')
+            i = j
+            # Delta information
+            r = []
+            i = 0
+            k = 0
+            while k < num_channels:
+                if delta_mask[k] == 1:
+                    if not shorted[k]:
+                        r.append(int(toInt(natus[j+i:j+i+2])))
+                        i += 2
+                else:
+                    if not shorted[k]:
+                        r.append(int(toInt(natus[j+i:j+i+1])))
+                        i += 1
+                k += 1
+            j += i
+            # Absolute channel values
+            for i in range(len(r)):
+                if r[i] == -32768:
+                    r[i] = int(toInt(natus[j:j+4]))
+                    j += 4
+            s = '{'
+            c = 0
+            if headbox_type == 1 or headbox_type == 3:
+                for i in range(len(r)):
+                    while shorted[c]:
+                        c += 1
+                    s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[c]] +
+                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                      discardbits) + ',')
+                    c += 1
+            elif headbox_type == 4:
+                for i in range(len(r)):
+                    if i in range(0, 24):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(24, 28):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
+                                    discardbits) + ',')
+            elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
+            elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
+            elif headbox_type == 6:
+                for i in range(len(r)):
+                    if i in range(0, 32):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 36):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
+                                    discardbits) + ',')
+            elif headbox_type == 8:
+                for i in range(len(r)):
+                    if i in range(0, 25):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(25, 27):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
+            elif headbox_type == 9:
+                for i in range(len(r)):
+                    if i in range(0, 33):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(33, 35):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
+            else:
+                for i in range(len(r)):
+                    while shorted[c]:
+                        c += 1
+                    s += ('\n\t\t\t\t"C' + str(c) +
+                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                      discardbits) + ',')
+                    c += 1
+            s = s[:len(s)-1]
+            s += '\n\t\t\t}'
+            jsonfile.write(s)
+            jsonfile.write('\n\t\t}')
+            if j < len(natus):
+                jsonfile.write(',')
     if file_schema == 9 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         jsonfile.write(toInt(natus[352:360]))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
+        num_channels = int(toInt(natus[360:364]))
         jsonfile.write(',\n\t"m_deltabits": ')
         jsonfile.write(toInt(natus[364:368]))
         jsonfile.write(',\n\t"m_phys_chan": ')
@@ -1037,6 +1213,7 @@ def natus2json(filename, jsonname):
         s += '\n\t]'
         jsonfile.write(s)
         jsonfile.write(',\n\t"m_headbox_type": ')
+        headbox_type = int(toInt(natus[4464:4468]))
         s = '['
         for j in range(4):
             s += '\n\t\t' + toInt(natus[4464 + j * 4:4464 + (j + 1) * 4]) + ','
@@ -1064,21 +1241,176 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[4546:4556]))
         jsonfile.write('",\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[4556:4560]))
+        discardbits = int(toInt(natus[4556:4560]))
         jsonfile.write(',\n\t"m_shorted": ')
+        shorted = []
+        num_shorted = 0
         s = '['
         for j in range(1024):
             s += '\n\t\t' + str(bool(natus[4560 + j * 2])).lower() + ','
+            shorted.append(bool(natus[4560 + j * 2]))
+            if bool(natus[4560 + j * 2]):
+                num_shorted += 1
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
         jsonfile.write(',\n\t"m_frequency_factor": ')
+        freqfac = False
         s = '['
         for j in range(1024):
             s += '\n\t\t' + toInt(natus[6608 + j * 2:6608 + (j + 1) * 2]) + ','
+            if int(toInt(natus[6608 + j * 2:6608 + (j + 1) * 2])) != 32767:
+                freqfac = True
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
-        # TODO: Delta array
+        j = 8656
+        while j < len(natus):
+            jsonfile.write('\n\t\t{')
+            jsonfile.write('\n\t\t\t"event_byte": ')
+            jsonfile.write(toInt(natus[j:j+1]))
+            j += 1
+            if freqfac:
+                jsonfile.write(',\n\t\t\t"frequency_byte": ')
+                jsonfile.write(toInt(natus[j:j+1]))
+                j += 1
+            delta_mask = []
+            for i in range(int(num_channels / 8 + 0.5)):
+                bits = []
+                nn = natus[j+i]
+                for k in range(8):
+                    if nn >= 2 ** (7-k):
+                        bits.insert(0, 1)
+                        nn -= 2 ** (7-k)
+                    else:
+                        bits.insert(0, 0)
+                for a in bits:
+                    delta_mask.append(a)
+            j += int(num_channels / 8 + 0.5)
+            jsonfile.write(',\n\t\t\t"delta_information": ')
+            i = j
+            # Delta information
+            r = []
+            i = 0
+            k = 0
+            while k < num_channels:
+                if delta_mask[k] == 1:
+                    if not shorted[k]:
+                        r.append(int(toInt(natus[j+i:j+i+2])))
+                        i += 2
+                else:
+                    if not shorted[k]:
+                        r.append(int(toInt(natus[j+i:j+i+1])))
+                        i += 1
+                k += 1
+            j += i
+            # Absolute channel values
+            for i in range(len(r)):
+                if r[i] == -32768:
+                    r[i] = int(toInt(natus[j:j+4]))
+                    j += 4
+            s = '{'
+            c = 0
+            if headbox_type == 1 or headbox_type == 3:
+                for i in range(len(r)):
+                    while shorted[c]:
+                        c += 1
+                    s += ('\n\t\t\t\t"' + chindex[headbox_type][phys_chan[c]] +
+                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                      discardbits) + ',')
+                    c += 1
+            elif headbox_type == 4:
+                for i in range(len(r)):
+                    if i in range(0, 24):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(24, 28):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
+                                    discardbits) + ',')
+            elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
+            elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
+                for i in range(len(r)):
+                    if i in range(0, 26):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(26, 32):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                            (159.8 / 249.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 40):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                    * 2 ** discardbits) + ',')
+                    elif i in range(40, 42):
+                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
+                              + ',')
+            elif headbox_type == 6:
+                for i in range(len(r)):
+                    if i in range(0, 32):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(32, 36):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
+                                    discardbits) + ',')
+            elif headbox_type == 8:
+                for i in range(len(r)):
+                    if i in range(0, 25):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(25, 27):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
+            elif headbox_type == 9:
+                for i in range(len(r)):
+                    if i in range(0, 33):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                    discardbits) + ',')
+                    elif i in range(33, 35):
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(r[i] * (1 / (2 ** 6)) * 2 **
+                                    discardbits) + ',')
+            else:
+                for i in range(len(r)):
+                    while shorted[c]:
+                        c += 1
+                    s += ('\n\t\t\t\t"C' + str(c) +
+                          '": ' + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
+                                      discardbits) + ',')
+                    c += 1
+            s = s[:len(s)-1]
+            s += '\n\t\t\t}'
+            jsonfile.write(s)
+            jsonfile.write('\n\t\t}')
+            if j < len(natus):
+                jsonfile.write(',')
     if file_schema == 3 and fex == 'ent':
         jsonfile.write('\n\t"notes": [')  # "notes" not specified in doc
         j = 352
