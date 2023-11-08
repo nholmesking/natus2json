@@ -100,7 +100,6 @@ def sepList(lstr):
     rl = []
     paren = 0
     quote = False
-    k = 0
     s = ''
     for i in range(len(lstr)):
         if lstr[i] in ' \n\t' and (not quote):
@@ -1397,7 +1396,7 @@ def natus2json(filename, jsonname):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
                               + str(r[i] * (1 / (2 ** 6)) * 2 **
                                     discardbits) + ',')
-            else:
+            else:  # TODO: more headbox types
                 for i in range(len(r)):
                     while shorted[c]:
                         c += 1
