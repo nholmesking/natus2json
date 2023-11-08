@@ -1313,7 +1313,8 @@ def natus2json(filename, jsonname):
 def multipleFiles(indir, outdir):
     for f in os.listdir(indir):
         if f[len(f)-3:] != 'avi':
-            natus2json(os.path.join(indir, f), os.path.join(outdir, f))
+            natus2json(os.path.join(indir, f),
+                       os.path.join(outdir, f + '.json'))
             print('DONE', f)
 
 
