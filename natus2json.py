@@ -50,6 +50,8 @@ def encode(char):
     s = ''
     if len(sys.argv) < 4 or sys.argv[3] == 'ascii':
         for a in char:
+            if a == 0:
+                return s
             s += chr(a)
     elif sys.argv[3] == 'utf8':
         i = 0
