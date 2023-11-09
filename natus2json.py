@@ -549,7 +549,7 @@ def natus2json(filename, jsonname):
         jsonfile.write('",\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[588:592]))
         discardbits = int(toInt(natus[588:592]))
-        jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
+        jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         j = 592
         if j < len(natus):
             jsonfile.write(',')
@@ -710,7 +710,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[962:972]))
         jsonfile.write('",\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[972:976]))
-        jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
+        jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         j = 976
         if j < len(natus):
             jsonfile.write(',')
@@ -871,10 +871,8 @@ def natus2json(filename, jsonname):
         jsonfile.write(encode(natus[4546:4556]))
         jsonfile.write(',\n\t"m_discardbits": ')
         jsonfile.write(toInt(natus[4556:4560]))
-        jsonfile.write(',\n\t"packets": [')  # "packets" not specified in doc
+        jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         j = 4560
-        if j < len(natus):
-            jsonfile.write(',')
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -1055,9 +1053,8 @@ def natus2json(filename, jsonname):
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
+        jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         j = 8656
-        if j < len(natus):
-            jsonfile.write(',')
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -1271,9 +1268,8 @@ def natus2json(filename, jsonname):
         s = s[:len(s)-1]
         s += '\n\t]'
         jsonfile.write(s)
+        jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         j = 8656
-        if j < len(natus):
-            jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
