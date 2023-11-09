@@ -589,71 +589,72 @@ def natus2json(filename, jsonname):
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(26, 32):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
                               + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
                                             (159.8 / 249.5)) * 2 **
                                     discardbits) + ',')
                     elif i in range(32, 40):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((1e7 / (2 ** 10 - 0.5)) /
+                                                  2 ** 6)
+                                    * 2 ** discardbits, 2)) + ',')
                     elif i in range(40, 42):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
-                              + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
                 for i in range(len(r)):
                     if i in range(0, 26):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(26, 32):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
-                                            (159.8 / 249.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                          (159.8 / 249.5)) * 2 **
+                                          discardbits, 2)) + ',')
                     elif i in range(32, 40):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                          * 2 ** discardbits, 2)) + ',')
                     elif i in range(40, 42):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
-                              + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 6:
                 for i in range(len(r)):
                     if i in range(0, 32):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(32, 36):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((5e6 / (2 ** 10 - 0.5)) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 8:
                 for i in range(len(r)):
                     if i in range(0, 25):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[8][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(25, 27):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[8][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) * 2 **
+                                          discardbits, 2)) + ',')
             elif headbox_type == 9:
                 for i in range(len(r)):
                     if i in range(0, 33):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[9][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(33, 35):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[9][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) * 2 **
+                                          discardbits, 2)) + ',')
             else:
                 for i in range(len(r)):
                     s += ('\n\t\t\t\t"C' + str(i) +
@@ -750,71 +751,72 @@ def natus2json(filename, jsonname):
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(26, 32):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
                               + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
                                             (159.8 / 249.5)) * 2 **
                                     discardbits) + ',')
                     elif i in range(32, 40):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((1e7 / (2 ** 10 - 0.5)) /
+                                                  2 ** 6)
+                                    * 2 ** discardbits, 2)) + ',')
                     elif i in range(40, 42):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
-                              + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
                 for i in range(len(r)):
                     if i in range(0, 26):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(26, 32):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
-                                            (159.8 / 249.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                          (159.8 / 249.5)) * 2 **
+                                          discardbits, 2)) + ',')
                     elif i in range(32, 40):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                          * 2 ** discardbits, 2)) + ',')
                     elif i in range(40, 42):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
-                              + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 6:
                 for i in range(len(r)):
                     if i in range(0, 32):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(32, 36):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 8:
                 for i in range(len(r)):
                     if i in range(0, 25):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[8][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(25, 27):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[8][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) * 2 **
+                                          discardbits, 2)) + ',')
             elif headbox_type == 9:
                 for i in range(len(r)):
                     if i in range(0, 33):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[9][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(33, 35):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[9][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) * 2 **
+                                          discardbits, 2)) + ',')
             else:
                 for i in range(len(r)):
                     s += ('\n\t\t\t\t"C' + str(i) +
@@ -909,71 +911,72 @@ def natus2json(filename, jsonname):
             elif headbox_type == 5 and (sw[1] < 3 or sw[1] == 3 and sw[2] < 4):
                 for i in range(len(r)):
                     if i in range(0, 26):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(26, 32):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
                               + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
                                             (159.8 / 249.5)) * 2 **
                                     discardbits) + ',')
                     elif i in range(32, 40):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((1e7 / (2 ** 10 - 0.5)) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((1e7 / (2 ** 10 - 0.5)) /
+                                                  2 ** 6)
+                                    * 2 ** discardbits, 2)) + ',')
                     elif i in range(40, 42):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
-                              + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 5 and (sw[1] > 3 or sw[1] == 3 and sw[2] > 3):
                 for i in range(len(r)):
                     if i in range(0, 26):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(26, 32):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((8711 / (2 ** 21 - 0.5)) /
-                                            (159.8 / 249.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((8711 / (2 ** 21 - 0.5)) /
+                                          (159.8 / 249.5)) * 2 **
+                                          discardbits, 2)) + ',')
                     elif i in range(32, 40):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * ((2e7 / 65536) / 2 ** 6)
-                                    * 2 ** discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * ((2e7 / 65536) / 2 ** 6)
+                                          * 2 ** discardbits, 2)) + ',')
                     elif i in range(40, 42):
-                        s += ('\n\t\t\t\t"' + chindex[4][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 ** discardbits)
-                              + ',')
+                        s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 6:
                 for i in range(len(r)):
                     if i in range(0, 32):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(32, 36):
                         s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (5e6 / (2 ** 10 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                              + str(round(r[i] * (5e6 / (2 ** 10 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
             elif headbox_type == 8:
                 for i in range(len(r)):
                     if i in range(0, 25):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[8][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(25, 27):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[8][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) * 2 **
+                                          discardbits, 2)) + ',')
             elif headbox_type == 9:
                 for i in range(len(r)):
                     if i in range(0, 33):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (8711 / (2 ** 21 - 0.5)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[9][phys_chan[i]] + '": '
+                              + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
+                                          2 ** discardbits, 2)) + ',')
                     elif i in range(33, 35):
-                        s += ('\n\t\t\t\t"' + chindex[6][phys_chan[i]] + '": '
-                              + str(r[i] * (1 / (2 ** 6)) * 2 **
-                                    discardbits) + ',')
+                        s += ('\n\t\t\t\t"' + chindex[9][phys_chan[i]] + '": '
+                              + str(round(r[i] * (1 / (2 ** 6)) * 2 **
+                                          discardbits, 2)) + ',')
             else:
                 for i in range(len(r)):
                     s += ('\n\t\t\t\t"C' + str(i) +
