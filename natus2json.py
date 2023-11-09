@@ -1148,7 +1148,7 @@ def natus2json(filename, jsonname):
                     elif i in range(26, 32):
                         s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
                               + str(round(r[i] * ((8711 / (2 ** 21 - 0.5)) /
-                                            (159.8 / 249.5)) * 2 **
+                                          (159.8 / 249.5)) * 2 **
                                           discardbits, 2)) + ',')
                     elif i in range(32, 40):
                         s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
@@ -1364,7 +1364,7 @@ def natus2json(filename, jsonname):
                     elif i in range(26, 32):
                         s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
                               + str(round(r[i] * ((8711 / (2 ** 21 - 0.5)) /
-                                            (159.8 / 249.5)) * 2 **
+                                          (159.8 / 249.5)) * 2 **
                                           discardbits, 2)) + ',')
                     elif i in range(32, 40):
                         s += ('\n\t\t\t\t"' + chindex[5][phys_chan[i]] + '": '
