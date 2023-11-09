@@ -215,7 +215,7 @@ def sepKeyTree(lstr):
             elif paren == 2:
                 k = 1
             continue
-        if paren == 2:
+        if paren > 1:
             if k == 0:
                 s += lstr[i]
             elif k == 1:
