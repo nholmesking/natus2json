@@ -9,7 +9,7 @@ import csv
 WORK IN PROGRESS.
 
 Command-line arguments:
-1. JSON file name
+1. JSON file name. JSON must be from natus2json.py.
 2. CSV file name
 
 PEP-8 compliant.
