@@ -1195,7 +1195,7 @@ def natus2json(filename, jsonname):
                 for i in range(len(r)):
                     while shorted[c]:
                         c += 1
-                    s += ('\n\t\t\t\t"C' + str(c) +
+                    s += ('\n\t\t\t\t"C' + str(c+1) +
                           '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
                                             2 ** discardbits, 2)) + ',')
                     c += 1
@@ -1496,7 +1496,7 @@ def natus2json(filename, jsonname):
                 for i in range(len(r)):
                     while shorted[c]:
                         c += 1
-                    s += ('\n\t\t\t\t"C' + str(c) +
+                    s += ('\n\t\t\t\t"C' + str(c+1) +
                           '": ' + str(round(r[i] * (8711 / (2 ** 21 - 0.5)) *
                                             2 ** discardbits, 2)) + ',')
                     c += 1
