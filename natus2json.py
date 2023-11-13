@@ -304,10 +304,10 @@ def dictToString(ind, numTabs):
         return r
 
 
-chindex = {1: ['C3', 'C4', 'CZ', 'F3', 'F4', 'F7', 'F8', 'FZ', 'FP1', 'FP2',
-               'FPZ', 'O1', 'O2', 'P3', 'P4', 'PZ', 'T3', 'T4', 'T5', 'T6',
-               'AUX1', 'AUX2', 'AUX3', 'AUX4', 'AUX5', 'AUX6', 'AUX7', 'AUX8',
-               'PG1', 'PG2', 'A1', 'A2'],
+chindex = {1: (['C3', 'C4', 'CZ', 'F3', 'F4', 'F7', 'F8', 'FZ', 'FP1', 'FP2',
+                'FPZ', 'O1', 'O2', 'P3', 'P4', 'PZ', 'T3', 'T4', 'T5', 'T6'] +
+               ['AUX' + str(i) for i in range(1, 9)] +
+               ['PG1', 'PG2', 'A1', 'A2']),
            3: (['C' + str(i) for i in range(1, 129)] + ['OSAT', 'PR'] +
                ['C' + str(i) for i in range(131, 257)]),
            4: ['AC1', 'AC2', 'Ref', 'Fp1', 'F7', 'T3', 'T5', 'O1', 'F3', 'C3',
@@ -325,10 +325,9 @@ chindex = {1: ['C3', 'C4', 'CZ', 'F3', 'F4', 'F7', 'F8', 'FZ', 'FP1', 'FP2',
            8: ['Ref', 'Fp1', 'F7', 'T3', 'A1', 'T5', 'O1', 'F3', 'C3', 'P3',
                'Fpz', 'Fz', 'Cz', 'Pz', 'Fp2', 'F8', 'T4', 'A2', 'T6', 'O2',
                'F4', 'C4', 'P4', 'X1', 'X2'],
-           9: ['Ref', 'Fp1', 'F7', 'T3', 'A1', 'T5', 'O1', 'F3', 'C3', 'P3',
-               'Fpz', 'Fz', 'Cz', 'Pz', 'Fp2', 'F8', 'T4', 'A2', 'T6', 'O2',
-               'F4', 'C4', 'P4', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7',
-               'X8', 'X9', 'X10'],
+           9: (['Ref', 'Fp1', 'F7', 'T3', 'A1', 'T5', 'O1', 'F3', 'C3', 'P3',
+                'Fpz', 'Fz', 'Cz', 'Pz', 'Fp2', 'F8', 'T4', 'A2', 'T6', 'O2',
+                'F4', 'C4', 'P4'] + ['X' + str(i) for i in range(1, 11)]),
            14: ['C3', 'C4', 'O1', 'O2', 'A1', 'A2', 'Cz', 'F3', 'F4', 'F7',
                 'F8', 'Fz', 'Fp1', 'Fp2', 'Fpz', 'P3', 'P4', 'Pz', 'T3', 'T4',
                 'T5', 'T6', 'LOC', 'ROC', 'CHIN1', 'CHIN2', 'ECGL', 'ECGR',
