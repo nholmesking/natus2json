@@ -498,7 +498,11 @@ def natus2json(filename, jsonname):
         jsonfile.write(',' + dictToString(t, 1))
     if file_schema == 5 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
-        jsonfile.write(toInt(natus[352:360]))
+        if toInt(natus[352:356]) == '0':
+            jsonfile.write(toInt(natus[356:360]))
+        else:
+            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
+                           str(int(toInt(natus[356:360]))))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
         num_channels = int(toInt(natus[360:364]))
@@ -669,7 +673,11 @@ def natus2json(filename, jsonname):
         jsonfile.write('\n\t]')
     if file_schema == 6 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
-        jsonfile.write(toInt(natus[352:360]))
+        if toInt(natus[352:356]) == '0':
+            jsonfile.write(toInt(natus[356:360]))
+        else:
+            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
+                           str(int(toInt(natus[356:360]))))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
         num_channels = int(toInt(natus[360:364]))
@@ -831,7 +839,11 @@ def natus2json(filename, jsonname):
         jsonfile.write('\n\t]')
     if file_schema == 7 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
-        jsonfile.write(toInt(natus[352:360]))
+        if toInt(natus[352:356]) == '0':
+            jsonfile.write(toInt(natus[356:360]))
+        else:
+            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
+                           str(int(toInt(natus[356:360]))))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
         num_channels = int(toInt(natus[360:364]))
@@ -991,7 +1003,11 @@ def natus2json(filename, jsonname):
         jsonfile.write('\n\t]')
     if file_schema == 8 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
-        jsonfile.write(toInt(natus[352:360]))
+        if toInt(natus[352:356]) == '0':
+            jsonfile.write(toInt(natus[356:360]))
+        else:
+            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
+                           str(int(toInt(natus[356:360]))))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
         num_channels = int(toInt(natus[360:364]))
@@ -1207,7 +1223,11 @@ def natus2json(filename, jsonname):
                 jsonfile.write(',')
     if file_schema == 9 and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
-        jsonfile.write(toInt(natus[352:360]))
+        if toInt(natus[352:356]) == '0':
+            jsonfile.write(toInt(natus[356:360]))
+        else:
+            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
+                           str(int(toInt(natus[356:360]))))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
         num_channels = int(toInt(natus[360:364]))

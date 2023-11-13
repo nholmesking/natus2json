@@ -29,15 +29,13 @@ def json2edf(jsonname, edfname):
     edffile = open(edfname, 'w')
     edffile.write('0' + ' ' * 7)  # data format version
     s = ''
-    s += jinp['Info']['Admin']['ID'] + ' '
-    if jinp['Info']['Personal']['Gender'] == 'Male':
-        s += 'M'
-    elif jinp['Info']['Personal']['Gender'] == 'Female':
-        s += 'F'
-    else:
-        s += 'X'
+    s += jinp['m_pat_id'] + ' '
+    s += '?'  # gender
     s += ' '
-    # MORE CODE HERE
+    s += '??-???-????'  # birthdate
+    s += ' '
+    s += (jinp['m_pat_last_name'] + '_' + jinp['m_pat_first_name'] + '_' +
+          jinp['m_pat_middle_name'])
     s = rightpad(s, 80)
     edffile.write(s[:80])  # local patient ID
     edffile.write(' ' * 80)  # PLACEHOLDER, local recording identification
@@ -45,11 +43,11 @@ def json2edf(jsonname, edfname):
     edffile.write(' ' * 8)  # PLACEHOLDER, starttime
     edffile.write(rightpad(str(256 + jinp['m_num_channels'] * 256), 8))
     edffile.write(' ' * 44)  # PLACEHOLDER, reserved
-    edffile.write(rightpad(str(len(jinp['packets'])), 8))
+    edffile.write(rightpad(str(len(jinp['data'])), 8))
     edffile.write(' ' * 8)  # PLACEHOLDER, duration of a data record
     edffile.write(rightpad(str(jinp['m_num_channels']), 4))
     channels = []
-    li = jinp['packets'][0]['delta_information']
+    li = jinp['data'][0]['delta_information']
     for b in li:  # label
         edffile.write(rightpad(b, 16))
         channels.append(b)
@@ -71,7 +69,7 @@ def json2edf(jsonname, edfname):
         edffile.write(' ' * 8)  # PLACEHOLDER
     for b in li:  # reserved
         edffile.write(' ' * 32)  # PLACEHOLDER
-    for a in jinp['packets']:  # DATA RECORDS
+    for a in jinp['data']:  # DATA RECORDS
         for b in channels:
             edffile.write(rightpad(str(a['delta_information'][b]), 16))
     edffile.close()
