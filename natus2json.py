@@ -496,7 +496,7 @@ def natus2json(filename, jsonname):
             i += 1
         t = sepKeyTree(encode(natus[352:i]))
         jsonfile.write(',' + dictToString(t, 1))
-    if file_schema == 5 and fex == 'erd':
+    if file_schema in range(5, 10) and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         if toInt(natus[352:356]) == '0':
             jsonfile.write(toInt(natus[356:360]))
@@ -509,6 +509,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(',\n\t"m_deltabits": ')
         jsonfile.write(toInt(natus[364:368]))
         jsonfile.write(',\n\t"m_phys_chan": ')
+    if file_schema == 5 and fex == 'erd':
         phys_chan = []
         s = '['
         for j in range(32):
@@ -672,18 +673,6 @@ def natus2json(filename, jsonname):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
     if file_schema == 6 and fex == 'erd':
-        jsonfile.write(',\n\t"m_sample_freq": ')
-        if toInt(natus[352:356]) == '0':
-            jsonfile.write(toInt(natus[356:360]))
-        else:
-            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
-                           str(int(toInt(natus[356:360]))))
-        jsonfile.write(',\n\t"m_num_channels": ')
-        jsonfile.write(toInt(natus[360:364]))
-        num_channels = int(toInt(natus[360:364]))
-        jsonfile.write(',\n\t"m_deltabits": ')
-        jsonfile.write(toInt(natus[364:368]))
-        jsonfile.write(',\n\t"m_phys_chan": ')
         s = '['
         for j in range(128):
             s += '\n\t\t' + toInt(natus[368 + j * 4:368 + (j + 1) * 4]) + ','
@@ -838,18 +827,6 @@ def natus2json(filename, jsonname):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
     if file_schema == 7 and fex == 'erd':
-        jsonfile.write(',\n\t"m_sample_freq": ')
-        if toInt(natus[352:356]) == '0':
-            jsonfile.write(toInt(natus[356:360]))
-        else:
-            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
-                           str(int(toInt(natus[356:360]))))
-        jsonfile.write(',\n\t"m_num_channels": ')
-        jsonfile.write(toInt(natus[360:364]))
-        num_channels = int(toInt(natus[360:364]))
-        jsonfile.write(',\n\t"m_deltabits": ')
-        jsonfile.write(toInt(natus[364:368]))
-        jsonfile.write(',\n\t"m_phys_chan": ')
         s = '['
         for j in range(1024):
             s += '\n\t\t' + toInt(natus[368 + j * 4:368 + (j + 1) * 4]) + ','
@@ -1002,18 +979,6 @@ def natus2json(filename, jsonname):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
     if file_schema == 8 and fex == 'erd':
-        jsonfile.write(',\n\t"m_sample_freq": ')
-        if toInt(natus[352:356]) == '0':
-            jsonfile.write(toInt(natus[356:360]))
-        else:
-            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
-                           str(int(toInt(natus[356:360]))))
-        jsonfile.write(',\n\t"m_num_channels": ')
-        jsonfile.write(toInt(natus[360:364]))
-        num_channels = int(toInt(natus[360:364]))
-        jsonfile.write(',\n\t"m_deltabits": ')
-        jsonfile.write(toInt(natus[364:368]))
-        jsonfile.write(',\n\t"m_phys_chan": ')
         s = '['
         for j in range(1024):
             s += '\n\t\t' + toInt(natus[368 + j * 4:368 + (j + 1) * 4]) + ','
@@ -1222,18 +1187,6 @@ def natus2json(filename, jsonname):
             if j < len(natus):
                 jsonfile.write(',')
     if file_schema == 9 and fex == 'erd':
-        jsonfile.write(',\n\t"m_sample_freq": ')
-        if toInt(natus[352:356]) == '0':
-            jsonfile.write(toInt(natus[356:360]))
-        else:
-            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
-                           str(int(toInt(natus[356:360]))))
-        jsonfile.write(',\n\t"m_num_channels": ')
-        jsonfile.write(toInt(natus[360:364]))
-        num_channels = int(toInt(natus[360:364]))
-        jsonfile.write(',\n\t"m_deltabits": ')
-        jsonfile.write(toInt(natus[364:368]))
-        jsonfile.write(',\n\t"m_phys_chan": ')
         s = '['
         for j in range(1024):
             s += '\n\t\t' + toInt(natus[368 + j * 4:368 + (j + 1) * 4]) + ','
