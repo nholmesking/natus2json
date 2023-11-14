@@ -388,8 +388,8 @@ def natus2json(filename, jsonname):
     if fex != 'vtc':
         jsonfile.write('"m_file_guid": "')
         jsonfile.write(toGUID(natus[:16]))
-    if base_schema == 0 and fex != 'vtc':
         jsonfile.write('",\n\t"m_file_schema": ')
+    if base_schema == 0 and fex != 'vtc':
         jsonfile.write(toInt(natus[16:20]))
         jsonfile.write(',\n\t"m_creation_time": "')
         jsonfile.write(datetime.strftime(
@@ -398,9 +398,7 @@ def natus2json(filename, jsonname):
         jsonfile.write('",\n\t"m_product_version_high": ')
         jsonfile.write(toInt(natus[24:28]))
         jsonfile.write(',\n\t"m_product_version_low": ')
-        jsonfile.write(toInt(natus[28:32]))
     if base_schema == 1 and fex != 'vtc':
-        jsonfile.write('",\n\t"m_file_schema": ')
         jsonfile.write(toInt(natus[16:18]))
         jsonfile.write(',\n\t"m_base_schema": ')
         jsonfile.write(toInt(natus[18:20]))
@@ -411,8 +409,8 @@ def natus2json(filename, jsonname):
         jsonfile.write('",\n\t"m_patient_id": ')
         jsonfile.write(toInt(natus[24:28]))
         jsonfile.write(',\n\t"m_study_id": ')
-        jsonfile.write(toInt(natus[28:32]))
     if fex != 'vtc':
+        jsonfile.write(toInt(natus[28:32]))
         jsonfile.write(',\n\t"m_pat_last_name": "')
         jsonfile.write(encode(natus[32:112]))
         jsonfile.write('",\n\t"m_pat_first_name": "')
