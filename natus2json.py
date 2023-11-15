@@ -100,6 +100,7 @@ def sepList(lstr):
     rl = []
     paren = 0
     quote = False
+    lstr = lstr[:len(lstr)-1] + ',)'
     s = ''
     for i in range(len(lstr)):
         if lstr[i] in ' \n\t' and (not quote):
@@ -135,7 +136,6 @@ def sepList(lstr):
                 s = ''
             continue
         s += lstr[i]
-    rl.append(s)
     return rl
 
 
@@ -169,6 +169,7 @@ def sepKeyTree(lstr):
     paren = 0
     quote = False
     k = 0
+    lstr = lstr[:len(lstr)-1] + ',)'
     s = ''
     t = ''
     for i in range(len(lstr)):
@@ -229,7 +230,6 @@ def sepKeyTree(lstr):
                 s += lstr[i]
             elif k == 1:
                 t += lstr[i]
-    rd[s] = t
     return sepDots(rd)
 
 
