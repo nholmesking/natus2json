@@ -42,7 +42,7 @@ def toPlusInt(lst):
     return str(t)
 
 
-def toDouble(lst):
+def toDouble(lst):  # VERIFY signed vs. unsigned
     if toInt(lst[:4]) == '0':
         return toPlusInt(lst[4:])
     else:
@@ -1496,9 +1496,9 @@ def natus2json(filename, jsonname):
         j = 352
         while j < len(natus):
             jsonfile.write('\n\t\t{\n\t\t\t"sampleStamp": ')
-            jsonfile.write(toPlusInt(natus[j:j+4]))
+            jsonfile.write(toPlusInt(natus[j:j+4]))  # VERIFY num data type
             jsonfile.write(',\n\t\t\t"sampleTime": ')
-            jsonfile.write(toPlusInt(natus[j+4:j+12]))
+            jsonfile.write(toPlusInt(natus[j+4:j+12]))  # VERIFY num data type
             jsonfile.write('\n\t\t}')
             j += 16
             if j < len(natus):
