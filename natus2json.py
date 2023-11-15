@@ -31,6 +31,17 @@ def toInt(lst):
     return str(t)
 
 
+def toPlusInt(lst):
+    """
+    Convert a list of bytes into an unsigned int, and then to a string.
+    Assumes little-endian.
+    """
+    t = 0
+    for i in range(len(lst)):
+        t += lst[i] * 2 ** (i * 8)
+    return str(t)
+
+
 def toFileTime(lst):
     """
     Not in use.
@@ -1505,16 +1516,16 @@ def natus2json(filename, jsonname):
         jsonfile.write('\n\t"contents": [')  # "contents" not specified in doc
         j = 402
         while j < len(natus):
-            jsonfile.write('\n\t\t{\n\t\t\t"segment_name": ')
+            jsonfile.write('\n\t\t{\n\t\t\t"segment_name": "')
             jsonfile.write(encode(natus[j:j+256]))
-            jsonfile.write(',\n\t\t\t"start_stamp": ')
-            jsonfile.write(toInt(natus[j+256:j+260]))
+            jsonfile.write('",\n\t\t\t"start_stamp": ')
+            jsonfile.write(toPlusInt(natus[j+256:j+260]))
             jsonfile.write(',\n\t\t\t"end_stamp": ')
-            jsonfile.write(toInt(natus[j+260:j+264]))
+            jsonfile.write(toPlusInt(natus[j+260:j+264]))
             jsonfile.write(',\n\t\t\t"sample_num": ')
-            jsonfile.write(toInt(natus[j+264:j+268]))
+            jsonfile.write(toPlusInt(natus[j+264:j+268]))
             jsonfile.write(',\n\t\t\t"sample_span": ')
-            jsonfile.write(toInt(natus[j+268:j+272]))
+            jsonfile.write(toPlusInt(natus[j+268:j+272]))
             jsonfile.write('\n\t\t}')
             j += 276
             if j < len(natus):
