@@ -1201,6 +1201,7 @@ def natus2json(filename, jsonname):
         jsonfile.write(s)
         jsonfile.write(',\n\t"data": [')  # "data" not specified in doc
         j = 8656
+        nsam = 0
         while j < len(natus):
             jsonfile.write('\n\t\t{')
             jsonfile.write('\n\t\t\t"event_byte": ')
@@ -1431,6 +1432,7 @@ def natus2json(filename, jsonname):
             s += '\n\t\t\t}'
             jsonfile.write(s)
             jsonfile.write('\n\t\t}')
+            nsam += 1
             if j < len(natus):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
