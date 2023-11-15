@@ -10,6 +10,8 @@ WORK IN PROGRESS.
 Command-line arguments:
 1. JSON file name. JSON must be from natus2json.py.
 2. EDF file name
+3. First record (inclusive, start at 0). Leaving blank gives all records.
+4. Last record (inclusive, start at 0)
 
 PEP-8 compliant.
 """
@@ -22,10 +24,36 @@ def rightpad(ins, n):
     return out
 
 
-def json2edf(jsonname, edfname):
+def json2edf(jsonname, edfname, first, last):
+    if first != '':
+        try:
+            first = int(first)
+        except ValueError:
+            print('ERROR: "' + first '" is not a valid integer.')
+            return
+    if last != '':
+        try:
+            last = int(last)
+        except ValueError:
+            print('ERROR: "' + last '" is not a valid integer.')
+            return
     infile = open(jsonname, 'r')
     jinp = json.loads(infile.read())
     infile.close()
+    if ((type(first) is int and first < -1) or (type(first) is int and
+                                                first > len(jinp['data']))):
+        print('ERROR: start-of-list index out of range.')
+        return
+    if ((type(last) is int and last < -1) or (type(last) is int and
+                                              last > len(jinp['data']))):
+        print('ERROR: end-of-list index out of range.')
+        return
+    if type(first) is int and type(last) is int:
+        jdat = jinp['data'][first:last]
+    elif type(first) is int:
+        jdat = jinp['data'][first:]
+    else:
+        jdat = jinp['data']
     edffile = open(edfname, 'w')
     edffile.write('0' + ' ' * 7)  # data format version
     s = ''
@@ -43,11 +71,11 @@ def json2edf(jsonname, edfname):
     edffile.write(' ' * 8)  # PLACEHOLDER, starttime
     edffile.write(rightpad(str(256 + jinp['m_num_channels'] * 256), 8))
     edffile.write(' ' * 44)  # PLACEHOLDER, reserved
-    edffile.write(rightpad(str(len(jinp['data'])), 8))
+    edffile.write(rightpad(str(len(jdat)), 8))
     edffile.write(' ' * 8)  # PLACEHOLDER, duration of a data record
     edffile.write(rightpad(str(jinp['m_num_channels']), 4))
     channels = []
-    li = jinp['data'][0]['delta_information']
+    li = jdat[0]['delta_information']
     for b in li:  # label
         edffile.write(rightpad(b, 16))
         channels.append(b)
@@ -69,11 +97,14 @@ def json2edf(jsonname, edfname):
         edffile.write(' ' * 8)  # PLACEHOLDER
     for b in li:  # reserved
         edffile.write(' ' * 32)  # PLACEHOLDER
-    for a in jinp['data']:  # DATA RECORDS
+    for a in jdat:  # DATA RECORDS
         for b in channels:
             edffile.write(rightpad(str(a['delta_information'][b]), 16))
     edffile.close()
 
 
 if __name__ == '__main__':
-    json2edf(sys.argv[1], sys.argv[2])
+    sav = sys.argv
+    while len(sav) < 5:
+        sav.append('')
+    json2edf(sav[1], sav[2], sav[3], sav[4])
