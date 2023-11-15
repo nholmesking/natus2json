@@ -42,6 +42,13 @@ def toPlusInt(lst):
     return str(t)
 
 
+def toDouble(lst):
+    if toInt(lst[:4]) == '0':
+        return toPlusInt(lst[4:])
+    else:
+        return str(int(toPlusInt(lst[:4])) * 256 + int(toPlusInt(lst[4:])))
+
+
 def toFileTime(lst):
     """
     Not in use.
@@ -449,11 +456,7 @@ def natus2json(filename, jsonname):
             jsonfile.write(',' + dictToString(t, 1))
     if file_schema in range(5, 10) and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
-        if toInt(natus[352:356]) == '0':
-            jsonfile.write(toInt(natus[356:360]))
-        else:
-            jsonfile.write(str(int(toInt(natus[352:356])) * 256) +
-                           str(int(toInt(natus[356:360]))))
+        jsonfile.write(toDouble(natus[352:360]))
         jsonfile.write(',\n\t"m_num_channels": ')
         jsonfile.write(toInt(natus[360:364]))
         num_channels = int(toInt(natus[360:364]))
@@ -1493,9 +1496,9 @@ def natus2json(filename, jsonname):
         j = 352
         while j < len(natus):
             jsonfile.write('\n\t\t{\n\t\t\t"sampleStamp": ')
-            jsonfile.write(toInt(natus[j:j+4]))
+            jsonfile.write(toPlusInt(natus[j:j+4]))
             jsonfile.write(',\n\t\t\t"sampleTime": ')
-            jsonfile.write(toInt(natus[j+4:j+12]))
+            jsonfile.write(toPlusInt(natus[j+4:j+12]))
             jsonfile.write('\n\t\t}')
             j += 16
             if j < len(natus):
