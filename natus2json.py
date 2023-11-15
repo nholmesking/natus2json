@@ -106,17 +106,20 @@ def sepList(lstr):
             continue
         elif lstr[i] == '(' and (not quote):
             paren += 1
-            continue
+            if paren < 2:
+                continue
         elif lstr[i] == ')' and (not quote):
             paren -= 1
-            continue
+            if paren < 1:
+                continue
         elif lstr[i] == '"' and (i == 0 or lstr[i-1] != '\\' or
                                  (lstr[i-1] == '\\' and i > 1 and
                                   lstr[i-2] == '\\')):
             quote = not quote
-            continue
+            if paren < 3:
+                continue
         elif lstr[i] == ',' and (not quote) and paren == 1:
-            if s[0] == '(':
+            if len(s) > 1 and s[0] == '(':
                 if s[1] == '.':
                     rl.append(sepKeyTree(s))
                 else:
@@ -163,7 +166,7 @@ def sepKeyTree(lstr):
     Take a string of a Natus key tree and return a Python dict.
     """
     rd = {}
-    paren = -1
+    paren = 0
     quote = False
     k = 0
     s = ''
@@ -173,20 +176,23 @@ def sepKeyTree(lstr):
             continue
         elif lstr[i] == '(' and (not quote):
             paren += 1
-            continue
+            if paren < 3:
+                continue
         elif lstr[i] == ')' and (not quote):
             paren -= 1
-            continue
+            if paren < 2:
+                continue
         elif lstr[i] == '"' and (i == 0 or lstr[i-1] != '\\' or
                                  (lstr[i-1] == '\\' and i > 1 and
                                   lstr[i-2] == '\\')):
             quote = not quote
-            continue
+            if paren < 3:
+                continue
         elif lstr[i] == ',' and (not quote):
             if paren == 1:
                 if k % 2 == 1:
-                    if s[0] == '(':
-                        if s[1] == '.':
+                    if len(t) > 1 and t[0] == '(':
+                        if t[1] == '.':
                             rd[s] = sepKeyTree(t)
                         else:
                             rd[s] = sepList(t)
@@ -212,8 +218,11 @@ def sepKeyTree(lstr):
                     s = ''
                     t = ''
                 k = 0
+                continue
             elif paren == 2:
                 k = 1
+                continue
+        elif lstr[i] == '.' and (not quote) and paren < 3:
             continue
         if paren > 1:
             if k == 0:
@@ -258,19 +267,19 @@ def listToString(ind, numTabs):
     """
     r = ''
     for a in ind:
-        if type(ind[a]) is int or type(ind[a]) is float:
-            r += ',\n' + '\t' * numTabs + str(ind[a])
-        elif type(ind[a]) is str:
-            r += ',\n' + '\t' * numTabs + '"' + ind[a] + '"'
-        elif type(ind[a]) is bool:
-            r += ',\n' + '\t' * numTabs + str(ind[a]).lower()
-        elif type(ind[a]) is list:
+        if type(a) is int or type(a) is float:
+            r += ',\n' + '\t' * numTabs + str(a)
+        elif type(a) is str:
+            r += ',\n' + '\t' * numTabs + '"' + a + '"'
+        elif type(a) is bool:
+            r += ',\n' + '\t' * numTabs + str(a).lower()
+        elif type(a) is list:
             r += ',\n' + '\t' * numTabs + '['
-            r += listToString(ind[a], numTabs + 1)
+            r += listToString(a, numTabs + 1)
             r += '\n' + '\t' * numTabs + ']'
-        elif type(ind[a]) is dict:
+        elif type(a) is dict:
             r += ',\n' + '\t' * numTabs + '{'
-            r += dictToString(ind[a], numTabs + 1)
+            r += dictToString(a, numTabs + 1)
             r += '\n' + '\t' * numTabs + '}'
     if len(r) > 0 and r[0] == ',':
         return r[1:]
@@ -425,7 +434,8 @@ def natus2json(filename, jsonname):
         while natus[i] != 0:
             i += 1
         t = sepKeyTree(encode(natus[352:i]))
-        jsonfile.write(',' + dictToString(t, 1))
+        if t != {'': ''}:
+            jsonfile.write(',' + dictToString(t, 1))
     if file_schema in range(5, 10) and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         if toInt(natus[352:356]) == '0':
@@ -1426,7 +1436,8 @@ def natus2json(filename, jsonname):
             while i < len(natus) and natus[i] != 0:
                 i += 1
             t = sepKeyTree(encode(natus[j+16:i]))
-            jsonfile.write(',' + dictToString(t, 3))
+            if t != {'': ''}:
+                jsonfile.write(',' + dictToString(t, 3))
             jsonfile.write('\n\t\t}')
             j = i + 1
             if j < len(natus):
