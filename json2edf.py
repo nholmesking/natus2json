@@ -29,13 +29,13 @@ def json2edf(jsonname, edfname, first, last):
         try:
             first = int(first)
         except ValueError:
-            print('ERROR: "' + first '" is not a valid integer.')
+            print('ERROR: "' + first + '" is not a valid integer.')
             return
     if last != '':
         try:
             last = int(last)
         except ValueError:
-            print('ERROR: "' + last '" is not a valid integer.')
+            print('ERROR: "' + last + '" is not a valid integer.')
             return
     infile = open(jsonname, 'r')
     jinp = json.loads(infile.read())
@@ -94,7 +94,7 @@ def json2edf(jsonname, edfname, first, last):
     for b in li:  # prefiltering
         edffile.write(' ' * 80)  # PLACEHOLDER
     for b in li:  # number of samples in each record
-        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write('1       ')  # VERIFY
     for b in li:  # reserved
         edffile.write(' ' * 32)  # PLACEHOLDER
     for a in jdat:  # DATA RECORDS

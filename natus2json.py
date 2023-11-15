@@ -1454,7 +1454,7 @@ def natus2json(filename, jsonname):
             if j < len(natus):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
-    if file_schema == 2 and fex == 'toc':
+    if file_schema == 2 and (fex == 'toc' or fex == 'etc'):  # VERIFY
         jsonfile.write('\n\t"contents": [')  # "contents" not specified in doc
         j = 352
         while j < len(natus):
@@ -1471,7 +1471,7 @@ def natus2json(filename, jsonname):
             if j < len(natus):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
-    if file_schema == 3 and fex == 'toc':
+    if file_schema == 3 and (fex == 'toc' or fex == 'etc'):  # VERIFY
         jsonfile.write('\n\t"contents": [')  # "contents" not specified in doc
         j = 352
         while j < len(natus):
@@ -1488,7 +1488,7 @@ def natus2json(filename, jsonname):
             if j < len(natus):
                 jsonfile.write(',')
         jsonfile.write('\n\t]')
-    if file_schema == 0 and fex == 'snc':
+    if (file_schema == 0 or file_schema == 1) and fex == 'snc':  # VERIFY
         jsonfile.write('\n\t"contents": [')  # "contents" not specified in doc
         j = 352
         while j < len(natus):
