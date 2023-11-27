@@ -12,7 +12,6 @@ WORK IN PROGRESS.
 Command-line arguments:
 1. input directory
 2. output directory
-3. source character encoding: "ascii", "utf8"
 
 PEP-8 compliant.
 """
@@ -65,12 +64,25 @@ def encode(char):
     Convert a list of bytes representing chars into a string.
     """
     s = ''
-    if len(sys.argv) < 4 or sys.argv[3] == 'ascii':
+    for a in char:
+        if a == 0:
+            return s
+        s += chr(a)
+    return s
+
+
+def encodeWithUTF8(char, encoding):
+    """
+    Convert a list of bytes representing chars into a string.
+    Not in use.
+    """
+    s = ''
+    if encoding == 'ascii':
         for a in char:
             if a == 0:
                 return s
             s += chr(a)
-    elif sys.argv[3] == 'utf8':
+    elif encoding == 'utf8':
         i = 0
         try:
             while i < len(char):
