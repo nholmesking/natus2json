@@ -1,5 +1,7 @@
 Converts Natus files into JSON format.
 
+All Python files are PEP-8 compliant.
+
 Lines marked with "VERIFY" need to be verified to make sure they are compliant with the documentation.
 
 Files:
