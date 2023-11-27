@@ -37,8 +37,7 @@ def edf_range(inname, outname, start, end):
         print('ERROR: start/end values out of range.')
         return
     outfile = open(outname, 'wb')
-    outfile.write(edf[:236] + bytes(rightpad(str(end-start), 8),
-                                    'ascii') + edf[244:256])
+    outfile.write(edf[:236] + rightpad(str(end-start), 8) + edf[244:256])
     numsig = int(encode(edf[252:256]).strip())
     headend = 256 * (numsig + 1)
     outfile.write(edf[256:headend])

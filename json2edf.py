@@ -3,6 +3,7 @@
 
 import sys
 import json
+from natus2json import encode
 
 """
 WORK IN PROGRESS.
@@ -21,7 +22,7 @@ def rightpad(ins, n):
     out = ins
     while len(out) < n:
         out += ' '
-    return out
+    return bytes(out, 'ascii')
 
 
 def json2edf(jsonname, edfname, first, last):
@@ -54,8 +55,8 @@ def json2edf(jsonname, edfname, first, last):
         jdat = jinp['data'][first:]
     else:
         jdat = jinp['data']
-    edffile = open(edfname, 'w')
-    edffile.write('0' + ' ' * 7)  # data format version
+    edffile = open(edfname, 'wb')
+    edffile.write(bytes('0' + ' ' * 7))  # data format version
     s = ''
     s += jinp['m_pat_id'] + ' '
     s += '?'  # gender
@@ -66,13 +67,13 @@ def json2edf(jsonname, edfname, first, last):
           jinp['m_pat_middle_name'])
     s = rightpad(s, 80)
     edffile.write(s[:80])  # local patient ID
-    edffile.write(' ' * 80)  # PLACEHOLDER, local recording identification
-    edffile.write(' ' * 8)  # PLACEHOLDER, startdate
-    edffile.write(' ' * 8)  # PLACEHOLDER, starttime
+    edffile.write(bytes(' ' * 80))  # PLACEHOLDER, local recording id
+    edffile.write(bytes(' ' * 8))  # PLACEHOLDER, startdate
+    edffile.write(bytes(' ' * 8))  # PLACEHOLDER, starttime
     edffile.write(rightpad(str(256 + jinp['m_num_channels'] * 256), 8))
-    edffile.write(' ' * 44)  # PLACEHOLDER, reserved
+    edffile.write(bytes(' ' * 44))  # PLACEHOLDER, reserved
     edffile.write(rightpad(str(len(jdat)), 8))
-    edffile.write(' ' * 8)  # PLACEHOLDER, duration of a data record
+    edffile.write(bytes(' ' * 8))  # PLACEHOLDER, duration of a data record
     edffile.write(rightpad(str(jinp['m_num_channels']), 4))
     channels = []
     li = jdat[0]['delta_information']
@@ -80,26 +81,26 @@ def json2edf(jsonname, edfname, first, last):
         edffile.write(rightpad(b, 16))
         channels.append(b)
     for b in li:  # transducer type
-        edffile.write(' ' * 80)  # PLACEHOLDER
+        edffile.write(bytes(' ' * 80))  # PLACEHOLDER
     for b in li:  # physical dimension
-        edffile.write('uV      ')
+        edffile.write(bytes('uV      '))
     for b in li:  # physical minimum
-        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(bytes(' ' * 8))  # PLACEHOLDER
     for b in li:  # physical maximum
-        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(bytes(' ' * 8))  # PLACEHOLDER
     for b in li:  # digital minimum
-        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(bytes(' ' * 8))  # PLACEHOLDER
     for b in li:  # digital maximum
-        edffile.write(' ' * 8)  # PLACEHOLDER
+        edffile.write(bytes(' ' * 8))  # PLACEHOLDER
     for b in li:  # prefiltering
-        edffile.write(' ' * 80)  # PLACEHOLDER
+        edffile.write(bytes(' ' * 80))  # PLACEHOLDER
     for b in li:  # number of samples in each record
-        edffile.write('1       ')  # VERIFY
+        edffile.write(bytes('1       '))  # VERIFY
     for b in li:  # reserved
-        edffile.write(' ' * 32)  # PLACEHOLDER
+        edffile.write(bytes(' ' * 32))  # PLACEHOLDER
     for a in jdat:  # DATA RECORDS
         for b in channels:
-            edffile.write(rightpad(str(a['delta_information'][b]), 16))
+            edffile.write(bytes(a['delta_information'][b]))
     edffile.close()
 
 
