@@ -1696,6 +1696,7 @@ def multipleFiles(indir, outdir):
                 et = time.time()
                 print('DONE', round(et - st, 2), 's', f)
             except IndexError:
+                et = time.time()
                 print('FAILED IndexError', round(et - st, 2), 's', f)
 
 
