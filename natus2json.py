@@ -1664,7 +1664,7 @@ def natus2json(filename, jsonname):
             j += 281
             if j < len(natus):
                 jsonfile.write(',')
-    if file_schema == 4 and fex == 'vtc':
+    if file_schema % 131072 == 65537 and fex == 'vtc':
         j = 20
         while j < len(natus):
             jsonfile.write('\n\t\t{')
