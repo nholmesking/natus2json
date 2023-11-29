@@ -5,6 +5,7 @@ import sys
 from datetime import datetime
 from datetime import timezone
 import os
+import time
 
 """
 WORK IN PROGRESS.
@@ -1689,11 +1690,13 @@ def multipleFiles(indir, outdir):
     for f in os.listdir(indir):
         if f[len(f)-3:] != 'avi':
             try:
+                st = time.time()
                 natus2json(os.path.join(indir, f),
                            os.path.join(outdir, f + '.json'))
-                print('DONE', f)
+                et = time.time()
+                print('DONE', round(et - st, 2), 's', f)
             except IndexError:
-                print('FAILED IndexError', f)
+                print('FAILED IndexError', round(et - st, 2), 's', f)
 
 
 if __name__ == '__main__':
