@@ -4,6 +4,7 @@
 import sys
 import json
 from natus2json import encode
+import time
 
 """
 WORK IN PROGRESS.
@@ -108,4 +109,7 @@ if __name__ == '__main__':
     sav = sys.argv
     while len(sav) < 5:
         sav.append('')
+    st = time.time()
     json2edf(sav[1], sav[2], sav[3], sav[4])
+    et = time.time()
+    print('DONE', round(et - st, 2), 's')
