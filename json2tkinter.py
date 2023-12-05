@@ -48,6 +48,30 @@ def scrollLeft(event):
     draw(tk, c, jinp['data'], xoff, yoff)
 
 
+def scrollDown(event):
+    global jinp
+    global tk
+    global c
+    global xoff
+    global yoff
+    if yoff < len(jinp['data'][0]['delta_information']) - 1:
+        yoff += 1
+    c.delete('all')
+    draw(tk, c, jinp['data'], xoff, yoff)
+
+
+def scrollUp(event):
+    global jinp
+    global tk
+    global c
+    global xoff
+    global yoff
+    if yoff >= 1:
+        yoff -= 1
+    c.delete('all')
+    draw(tk, c, jinp['data'], xoff, yoff)
+
+
 def draw(tk, c, data, xoff, yoff):
     """
     Draws everything on canvas.
@@ -61,17 +85,19 @@ def draw(tk, c, data, xoff, yoff):
     sensors = []
     for a in data[0]['delta_information']:
         sensors.append(a)
-    for i in range(len(sensors)):
+    for i in range(len(sensors)-yoff):
         c.create_line(80, 200*(i+1), 100, 200*(i+1))
-        c.create_text(80, 200*(i+1), text=sensors[i],
+        c.create_text(80, 200*(i+1), text=sensors[i+yoff],
                       font=('Helvetica', 32), anchor='e')
         for j in range(0, 140):
             c.create_line(j*10+100,
                           (200*(i+1) -
-                           data[xoff+j]['delta_information'][sensors[i]] /
+                           data[xoff +
+                                j]['delta_information'][sensors[i+yoff]] /
                            50), j*10+110,
                           (200*(i+1) -
-                           data[xoff+j+1]['delta_information'][sensors[i]] /
+                           data[xoff + j +
+                                1]['delta_information'][sensors[i+yoff]] /
                            50), width=2)
     tk.update()
 
@@ -94,6 +120,8 @@ def json2tkinter(jsonname):
     c.pack()
     c.bind_all('<KeyPress-Right>', scrollRight)
     c.bind_all('<KeyPress-Left>', scrollLeft)
+    c.bind_all('<KeyPress-Down>', scrollDown)
+    c.bind_all('<KeyPress-Up>', scrollUp)
     draw(tk, c, jinp['data'], 0, 0)
     inp = ''
     while inp != 'y':
