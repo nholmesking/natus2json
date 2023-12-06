@@ -11,8 +11,9 @@ WORK IN PROGRESS.
 Command-line arguments:
 1. JSON file name.
 
-How to use:
+Keyboard usage:
 - Left & right arrow keys to scroll time range.
+- Up & down arrow keys to scroll between sensors.
 
 PEP-8 compliant.
 """
@@ -23,53 +24,78 @@ tk = 0
 c = 0
 xoff = 0
 yoff = 0
+buttons = []
 
 
-def scrollRight(event):
+def scrollRight():
     global jinp
     global tk
     global c
     global xoff
     global yoff
+    global buttons
     xoff += 10
     c.delete('all')
     draw(tk, c, jinp['data'], xoff, yoff)
+    buttons[1].config(command=scrollRight)
 
 
-def scrollLeft(event):
+def scrollLeft():
     global jinp
     global tk
     global c
     global xoff
     global yoff
+    global buttons
     if xoff >= 10:
         xoff -= 10
     c.delete('all')
     draw(tk, c, jinp['data'], xoff, yoff)
+    buttons[0].config(command=scrollLeft)
 
 
-def scrollDown(event):
+def scrollDown():
     global jinp
     global tk
     global c
     global xoff
     global yoff
+    global buttons
     if yoff < len(jinp['data'][0]['delta_information']) - 1:
         yoff += 1
     c.delete('all')
     draw(tk, c, jinp['data'], xoff, yoff)
+    buttons[3].config(command=scrollDown)
 
 
-def scrollUp(event):
+def scrollUp():
     global jinp
     global tk
     global c
     global xoff
     global yoff
+    global buttons
     if yoff >= 1:
         yoff -= 1
     c.delete('all')
     draw(tk, c, jinp['data'], xoff, yoff)
+    buttons[2].config(command=scrollUp)
+
+
+def keyRight(event):
+    scrollRight()
+
+
+def keyLeft(event):
+    scrollLeft()
+
+
+def keyUp(event):
+    scrollUp()
+
+
+def keyDown(event):
+    scrollDown()
 
 
 def draw(tk, c, data, xoff, yoff):
@@ -111,6 +137,7 @@ def json2tkinter(jsonname):
     global c
     global xoff
     global yoff
+    global buttons
     infile = open(jsonname, 'r')
     jinp = json.loads(infile.read())
     infile.close()
@@ -118,10 +145,23 @@ def json2tkinter(jsonname):
     tk.title('Natus visualization')
     c = Canvas(height=900, width=1500)
     c.pack()
-    c.bind_all('<KeyPress-Right>', scrollRight)
-    c.bind_all('<KeyPress-Left>', scrollLeft)
-    c.bind_all('<KeyPress-Down>', scrollDown)
-    c.bind_all('<KeyPress-Up>', scrollUp)
+    bc = Canvas(height=100, width=100)
+    bc.pack()
+    buttons.append(Button(bc, text='Left', width=5, height=2,
+                          command=scrollLeft))
+    buttons.append(Button(bc, text='Right', width=5, height=2,
+                          command=scrollRight))
+    buttons.append(Button(bc, text='Up', width=5, height=2, command=scrollUp))
+    buttons.append(Button(bc, text='Down', width=5, height=2,
+                          command=scrollDown))
+    n = 0
+    while n < len(buttons):
+        buttons[n].grid(row=1, column=n)
+        n += 1
+    c.bind_all('<KeyPress-Right>', keyRight)
+    c.bind_all('<KeyPress-Left>', keyLeft)
+    c.bind_all('<KeyPress-Down>', keyDown)
+    c.bind_all('<KeyPress-Up>', keyUp)
     draw(tk, c, jinp['data'], 0, 0)
     inp = ''
     while inp != 'y':
