@@ -466,7 +466,9 @@ def natus2json(filename, jsonname):
             i += 1
         t = sepKeyTree(encode(natus[352:i]))
         if t != {'': ''}:
-            jsonfile.write(',' + dictToString(t, 1))
+            dts = dictToString(t, 1)
+            if len(dts) > 0:
+                jsonfile.write(',' + dictToString(t, 1))
     if file_schema in range(5, 10) and fex == 'erd':
         jsonfile.write(',\n\t"m_sample_freq": ')
         jsonfile.write(toDouble(natus[352:360]))
