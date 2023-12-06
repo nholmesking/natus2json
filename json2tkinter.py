@@ -14,6 +14,7 @@ Command-line arguments:
 Keyboard usage:
 - Left & right arrow keys to scroll time range.
 - Up & down arrow keys to scroll between sensors.
+- "I" to zoom in, "O" to zoom out.
 
 PEP-8 compliant.
 """
@@ -24,6 +25,7 @@ tk = 0
 c = 0
 xoff = 0
 yoff = 0
+xscale = 10
 buttons = []
 
 
@@ -33,10 +35,11 @@ def scrollRight():
     global c
     global xoff
     global yoff
+    global xscale
     global buttons
-    xoff += 10
+    xoff += xscale
     c.delete('all')
-    draw(tk, c, jinp['data'], xoff, yoff)
+    draw(tk, c, jinp['data'], xoff, yoff, xscale)
     buttons[1].config(command=scrollRight)
 
 
@@ -46,11 +49,12 @@ def scrollLeft():
     global c
     global xoff
     global yoff
+    global xscale
     global buttons
-    if xoff >= 10:
-        xoff -= 10
+    if xoff >= xscale:
+        xoff -= xscale
     c.delete('all')
-    draw(tk, c, jinp['data'], xoff, yoff)
+    draw(tk, c, jinp['data'], xoff, yoff, xscale)
     buttons[0].config(command=scrollLeft)
 
 
@@ -60,11 +64,12 @@ def scrollDown():
     global c
     global xoff
     global yoff
+    global xscale
     global buttons
     if yoff < len(jinp['data'][0]['delta_information']) - 1:
         yoff += 1
     c.delete('all')
-    draw(tk, c, jinp['data'], xoff, yoff)
+    draw(tk, c, jinp['data'], xoff, yoff, xscale)
     buttons[3].config(command=scrollDown)
 
 
@@ -74,12 +79,42 @@ def scrollUp():
     global c
     global xoff
     global yoff
+    global xscale
     global buttons
     if yoff >= 1:
         yoff -= 1
     c.delete('all')
-    draw(tk, c, jinp['data'], xoff, yoff)
+    draw(tk, c, jinp['data'], xoff, yoff, xscale)
     buttons[2].config(command=scrollUp)
+
+
+def zoomOut():
+    global jinp
+    global tk
+    global c
+    global xoff
+    global yoff
+    global xscale
+    global buttons
+    xscale *= 2
+    c.delete('all')
+    draw(tk, c, jinp['data'], xoff, yoff, xscale)
+    buttons[5].config(command=zoomOut)
+
+
+def zoomIn():
+    global jinp
+    global tk
+    global c
+    global xoff
+    global yoff
+    global xscale
+    global buttons
+    if xscale >= 2:
+        xscale //= 2
+    c.delete('all')
+    draw(tk, c, jinp['data'], xoff, yoff, xscale)
+    buttons[4].config(command=zoomIn)
 
 
 def keyRight(event):
@@ -98,7 +133,15 @@ def keyDown(event):
     scrollDown()
 
 
-def draw(tk, c, data, xoff, yoff):
+def keyI(event):
+    zoomIn()
+
+
+def keyO(event):
+    zoomOut()
+
+
+def draw(tk, c, data, xoff, yoff, xscale):
     """
     Draws everything on canvas.
     """
@@ -106,7 +149,7 @@ def draw(tk, c, data, xoff, yoff):
     c.create_line(100, 100, 100, 900)  # Left line
     for i in range(0, 15):
         c.create_line(100*(i+1), 80, 100*(i+1), 100)
-        c.create_text(100*(i+1), 75, text=str(10*(i+int(xoff/10))),
+        c.create_text(100*(i+1), 75, text=str(xscale*i+xoff),
                       font=('Helvetica', 32), anchor='s')
     sensors = []
     for a in data[0]['delta_information']:
@@ -115,12 +158,12 @@ def draw(tk, c, data, xoff, yoff):
         c.create_line(80, 200*(i+1), 100, 200*(i+1))
         c.create_text(80, 200*(i+1), text=sensors[i+yoff],
                       font=('Helvetica', 32), anchor='e')
-        for j in range(0, 140):
-            c.create_line(j*10+100,
+        for j in range(0, 14*xscale):
+            c.create_line(j*100/xscale+100,
                           (200*(i+1) -
                            data[xoff +
                                 j]['delta_information'][sensors[i+yoff]] /
-                           50), j*10+110,
+                           50), j*100/xscale+100+100/xscale,
                           (200*(i+1) -
                            data[xoff + j +
                                 1]['delta_information'][sensors[i+yoff]] /
@@ -137,6 +180,7 @@ def json2tkinter(jsonname):
     global c
     global xoff
     global yoff
+    global xscale
     global buttons
     infile = open(jsonname, 'r')
     jinp = json.loads(infile.read())
@@ -154,15 +198,19 @@ def json2tkinter(jsonname):
     buttons.append(Button(bc, text='Up', width=5, height=2, command=scrollUp))
     buttons.append(Button(bc, text='Down', width=5, height=2,
                           command=scrollDown))
-    n = 0
-    while n < len(buttons):
-        buttons[n].grid(row=1, column=n)
-        n += 1
+    buttons.append(Button(bc, text='Zoom in', width=5, height=2,
+                          command=zoomIn))
+    buttons.append(Button(bc, text='Zoom out', width=5, height=2,
+                          command=zoomOut))
+    for i in range(6):
+        buttons[i].grid(row=1, column=i)
     c.bind_all('<KeyPress-Right>', keyRight)
     c.bind_all('<KeyPress-Left>', keyLeft)
     c.bind_all('<KeyPress-Down>', keyDown)
     c.bind_all('<KeyPress-Up>', keyUp)
-    draw(tk, c, jinp['data'], 0, 0)
+    c.bind_all('<KeyPress-i>', keyI)
+    c.bind_all('<KeyPress-o>', keyO)
+    draw(tk, c, jinp['data'], xoff, yoff, xscale)
     inp = ''
     while inp != 'y':
         inp = input('Exit? (y/[n])')
