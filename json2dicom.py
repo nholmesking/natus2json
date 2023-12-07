@@ -26,6 +26,7 @@ def json2dicom(jsonname, dicomname):
     ds.PatientName = (jinp['m_pat_last_name'] + '^' +
                       jinp['m_pat_first_name'] + '^' +
                       jinp['m_pat_middle_name'])
+    ds.PatientID = jinp['m_pat_id']
     # EXPAND
     pydicom.filewriter.dcmwrite(dicomname, ds)
 
