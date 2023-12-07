@@ -3,7 +3,9 @@
 
 import sys
 import json
-import pydicom
+from pydicom import dataset
+from pydicom import valuerep
+from pydicom import filewriter
 
 """
 WORK IN PROGRESS.
@@ -20,15 +22,19 @@ def json2dicom(jsonname, dicomname):
     infile = open(jsonname, 'r')
     jinp = json.loads(infile.read())
     infile.close()
-    ds = pydicom.dataset.Dataset()
+    ds = dataset.Dataset()
     ds.is_little_endian = True  # VERIFY
     ds.is_implicit_VR = False  # VERIFY
     ds.PatientName = (jinp['m_pat_last_name'] + '^' +
                       jinp['m_pat_first_name'] + '^' +
                       jinp['m_pat_middle_name'])
     ds.PatientID = jinp['m_pat_id']
+    ds.CreationDate = valuerep.DA.fromisoformat(jinp['m_creation_time'][:10])
+    ds.CreationTime = (valuerep.TM.
+                       fromisoformat(jinp['m_creation_time'][11:19] +
+                                     '+00:00'))
     # EXPAND
-    pydicom.filewriter.dcmwrite(dicomname, ds)
+    filewriter.dcmwrite(dicomname, ds)
 
 
 if __name__ == '__main__':
