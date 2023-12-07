@@ -21,6 +21,11 @@ def json2dicom(jsonname, dicomname):
     jinp = json.loads(infile.read())
     infile.close()
     ds = pydicom.dataset.Dataset()
+    ds.is_little_endian = True  # VERIFY
+    ds.is_implicit_VR = False  # VERIFY
+    ds.PatientName = (jinp['m_pat_last_name'] + '^' +
+                      jinp['m_pat_first_name'] + '^' +
+                      jinp['m_pat_middle_name'])
     # EXPAND
     pydicom.filewriter.dcmwrite(dicomname, ds)
 
