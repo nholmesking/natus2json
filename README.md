@@ -10,4 +10,4 @@ Files:
 - json2csv.py: converts JSON (from Natus ERD files) to CSV.
 - edf_range.py: inputs an EDF and outputs a selected time range from the EDF.
 - json2tkinter.py: inputs a JSON (from Natus ERD files) and generates an EEG visualization using Tkinter.
-- json2dicom.py: inputs a JSON (from natus2json.py) and generates a DICOM files. Currently non-functional.
+- json2dicom.py: inputs a JSON (from natus2json.py) and generates a DICOM files. Currently does not do anything useful.
