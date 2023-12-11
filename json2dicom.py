@@ -7,6 +7,7 @@ from pydicom import dataset
 from pydicom import valuerep
 from pydicom import filewriter
 from pydicom import sequence
+import time
 
 """
 WORK IN PROGRESS.
@@ -63,11 +64,27 @@ def json2dicom(jsonname, dicomname):
         ds.PatientSize = jinp['Info']['Personal']['Height'] / 100
         ds.PatientWeight = jinp['Info']['Personal']['Weight']
     elif fex == 'erd':
-        ds.SamplingFrequency = jinp['m_sample_freq']
-        ds.NumberOfWaveformChannels = jinp['m_num_channels']
-    # EXPAND
+        ds.WaveformSequence = sequence.Sequence()
+        for a in jinp['data']:
+            wsi = dataset.Dataset()
+            wsi.SamplingFrequency = jinp['m_sample_freq']
+            wsi.NumberOfWaveformChannels = len(a['delta_information'])
+            wsi.ChannelDefinitionSequence = sequence.Sequence()
+            for b in a['delta_information']:
+                wch = dataset.Dataset()
+                wch.ChannelLabel = b
+                wch.ChannelSensitivity = a['delta_information'][b]
+                wch.ChannelSensitivityUnitsSequence = sequence.Sequence()
+                wun = dataset.Dataset()
+                wun.CodingSchemeDesignator = 'UCUM'
+                wun.CodeValue = 'uV'
+                wch.ChannelSensitivityUnitsSequence.append(wun)
+                wsi.ChannelDefinitionSequence.append(wch)
+            ds.WaveformSequence.append(wsi)
     filewriter.dcmwrite(dicomname, ds)
 
 
 if __name__ == '__main__':
+    t = time.time()
     json2dicom(sys.argv[1], sys.argv[2])
+    print('DONE', round(time.time() - t, 2), 's')
