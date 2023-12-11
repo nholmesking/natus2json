@@ -81,6 +81,7 @@ def json2dicom(jsonname, dicomname):
                 wch.ChannelSensitivityUnitsSequence.append(wun)
                 wsi.ChannelDefinitionSequence.append(wch)
             ds.WaveformSequence.append(wsi)
+            i += 1
     filewriter.dcmwrite(dicomname, ds)
 
 
