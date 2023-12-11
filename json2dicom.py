@@ -28,15 +28,17 @@ def json2dicom(jsonname, dicomname):
     ds = dataset.Dataset()
     ds.is_little_endian = True  # VERIFY
     ds.is_implicit_VR = False  # VERIFY
-    ds.PatientName = (jinp['m_pat_last_name'] + '^' +
-                      jinp['m_pat_first_name'] + '^' +
-                      jinp['m_pat_middle_name'])
-    ds.PatientID = jinp['m_pat_id']
+    ds.LanguageCodeSequence = 'en'
     ds.InstanceCreationDate = (valuerep.DA.
                                fromisoformat(jinp['m_creation_time'][:10]))
     ds.InstanceCreationTime = (valuerep.TM.
                                fromisoformat(jinp['m_creation_time'][11:19] +
                                              '+00:00'))
+    ds.SOPInstanceUID = ins  # VERIFY
+    ds.PatientName = (jinp['m_pat_last_name'] + '^' +
+                      jinp['m_pat_first_name'] + '^' +
+                      jinp['m_pat_middle_name'])
+    ds.PatientID = jinp['m_pat_id']
     ins = ''
     i = 0
     while i < len(jinp['m_file_guid']):
@@ -47,9 +49,16 @@ def json2dicom(jsonname, dicomname):
             ins += '.'
         ins += str(int(jinp['m_file_guid'][i:i+2], 16))
         i += 2
-    ds.SOPInstanceUID = ins  # VERIFY
     ds.Modality = 'EEG'
-    if fex == 'erd':
+    ds.Manufacturer = 'Natus'
+    if fex == 'eeg':
+        try:
+            ds.PatientSex = jinp['Info']['Personal']['Gender'][0]
+        except IndexError:
+            ds.PatientSex = 'O'
+        ds.PatientSize = jinp['Info']['Personal']['Height'] / 100
+        ds.PatientWeight = jinp['Info']['Personal']['Weight']
+    elif fex == 'erd':
         ds.SamplingFrequency = jinp['m_sample_freq']
     # EXPAND
     filewriter.dcmwrite(dicomname, ds)
