@@ -6,6 +6,7 @@ import json
 from pydicom import dataset
 from pydicom import valuerep
 from pydicom import filewriter
+from pydicom import sequence
 
 """
 WORK IN PROGRESS.
@@ -28,17 +29,15 @@ def json2dicom(jsonname, dicomname):
     ds = dataset.Dataset()
     ds.is_little_endian = True  # VERIFY
     ds.is_implicit_VR = False  # VERIFY
-    ds.LanguageCodeSequence = 'en'
+    lsc = sequence.Sequence([dataset.Dataset()])
+    lsc[0].CodeValue = 'en'
+    lsc[0].CodingSchemeDesignator = 'RFC5646'
+    ds.LanguageCodeSequence = lsc
     ds.InstanceCreationDate = (valuerep.DA.
                                fromisoformat(jinp['m_creation_time'][:10]))
     ds.InstanceCreationTime = (valuerep.TM.
                                fromisoformat(jinp['m_creation_time'][11:19] +
                                              '+00:00'))
-    ds.SOPInstanceUID = ins  # VERIFY
-    ds.PatientName = (jinp['m_pat_last_name'] + '^' +
-                      jinp['m_pat_first_name'] + '^' +
-                      jinp['m_pat_middle_name'])
-    ds.PatientID = jinp['m_pat_id']
     ins = ''
     i = 0
     while i < len(jinp['m_file_guid']):
@@ -49,6 +48,11 @@ def json2dicom(jsonname, dicomname):
             ins += '.'
         ins += str(int(jinp['m_file_guid'][i:i+2], 16))
         i += 2
+    ds.SOPInstanceUID = ins  # VERIFY
+    ds.PatientName = (jinp['m_pat_last_name'] + '^' +
+                      jinp['m_pat_first_name'] + '^' +
+                      jinp['m_pat_middle_name'])
+    ds.PatientID = jinp['m_pat_id']
     ds.Modality = 'EEG'
     ds.Manufacturer = 'Natus'
     if fex == 'eeg':
@@ -60,6 +64,7 @@ def json2dicom(jsonname, dicomname):
         ds.PatientWeight = jinp['Info']['Personal']['Weight']
     elif fex == 'erd':
         ds.SamplingFrequency = jinp['m_sample_freq']
+        ds.NumberOfWaveformChannels = jinp['m_num_channels']
     # EXPAND
     filewriter.dcmwrite(dicomname, ds)
 
