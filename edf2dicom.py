@@ -20,6 +20,19 @@ Command-line arguments:
 PEP-8 compliant.
 """
 
+months = {'JAN': '01',
+          'FEB': '02',
+          'MAR': '03',
+          'APR': '04',
+          'MAY': '05',
+          'JUN': '06',
+          'JUL': '07',
+          'AUG': '08',
+          'SEP': '09',
+          'OCT': '10',
+          'NOV': '11',
+          'DEC': '12'}
+
 
 def edf2dicom(edfname, dicomname):
     ds = dataset.Dataset()
@@ -29,6 +42,19 @@ def edf2dicom(edfname, dicomname):
     infile = open(edfname, 'rb')
     edf = infile.read()
     infile.close()
+    pinfo = encode(edf[8:88]).split(' ')
+    ds.PatientSex = pinfo[1]
+    try:
+        diso = (pinfo[2][7:11] + '-' + months[pinfo[2][3:6]] + '-' +
+                pinfo[2][0:2])
+        ds.PatientBirthDate = valuerep.DA.fromisoformat(diso)
+    except IndexError:
+        pass
+    pn = pinfo[3].split('_')  # VERIFY
+    try:
+        ds.PatientName = pn[0] + '^' + pn[1]
+    except IndexError:
+        pass
     numrec = int(encode(edf[236:244]).strip())
     recsec = int(encode(edf[244:252]).strip())
     numsig = int(encode(edf[252:256]).strip())
