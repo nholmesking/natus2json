@@ -22,14 +22,15 @@ PEP-8 compliant.
 
 
 def edf2dicom(edfname, dicomname):
-    infile = open(edfname, 'rb')
-    edf = infile.read()
-    infile.close()
-    numrec = int(encode(edf[236:244]).strip())
     ds = dataset.Dataset()
     ds.is_little_endian = True  # VERIFY
     ds.is_implicit_VR = False  # VERIFY
     ds.Modality = 'EEG'
+    infile = open(edfname, 'rb')
+    edf = infile.read()
+    infile.close()
+    numrec = int(encode(edf[236:244]).strip())
+    recsec = int(encode(edf[244:252]).strip())
     numsig = int(encode(edf[252:256]).strip())
     headend = 256 * (numsig + 1)
     lenrec = int((len(edf) - headend) / numrec)  # Length of a record in bytes
@@ -55,6 +56,7 @@ def edf2dicom(edfname, dicomname):
                 except IndexError:
                     wsi = dataset.Dataset()
                     wsi.NumberOfWaveformChannels = 1
+                    wsi.SamplingFrequency = numsamp[j] // recsec
                     wsi.ChannelDefinitionSequence = sequence.Sequence()
                     dws.append(wsi)
                 wch = dataset.Dataset()
