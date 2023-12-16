@@ -56,6 +56,14 @@ def edf2dicom(edfname, dicomname):
         ds.PatientName = pn[0] + '^' + pn[1]
     except IndexError:
         pass
+    studydt = encode(edf[168:184])
+    if int(studydt[6:8]) < 85:
+        sdstr = '20'
+    else:
+        sdstr = '19'
+    sdstr += (studydt[6:8] + '-' + studydt[3:5] + '-' + studydt[:2] + 'T' +
+              studydt[8:10] + ':' + studydt[11:13] + ':' + studydt[14:16])
+    ds.AcquisitionDateTime = valuerep.DT.fromisoformat(sdstr)
     numrec = int(encode(edf[236:244]).strip())
     recsec = int(encode(edf[244:252]).strip())
     numsig = int(encode(edf[252:256]).strip())
