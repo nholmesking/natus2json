@@ -44,6 +44,7 @@ def edf2dicom(edfname, dicomname):
     edf = infile.read()
     infile.close()
     pinfo = encode(edf[8:88]).split(' ')
+    ds.PatientID = pinfo[0]
     ds.PatientSex = pinfo[1]
     try:
         diso = (pinfo[2][7:11] + '-' + months[pinfo[2][3:6]] + '-' +
