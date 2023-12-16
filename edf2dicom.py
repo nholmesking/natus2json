@@ -39,6 +39,7 @@ def edf2dicom(edfname, dicomname):
     ds.is_little_endian = True  # VERIFY
     ds.is_implicit_VR = False  # VERIFY
     ds.Modality = 'EEG'
+    ds.Manufacturer = 'Natus'
     infile = open(edfname, 'rb')
     edf = infile.read()
     infile.close()
