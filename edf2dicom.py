@@ -83,28 +83,37 @@ def edf2dicom(edfname, dicomname):
         units.append(encode(edf[256+96*numsig+8*i:256+96*numsig+8*(i+1)]))
     dws = sequence.Sequence()
     for i in range(numrec):
+        mpg = dataset.Dataset()  # Multiplex group
+        mpg.ChannelDefinitionSequence = sequence.Sequence()
+        mpg.NumberOfWaveformChannels = 0
+        mpg.NumberOfWaveformSamples = numsamp[0]
+        mpg.WaveformBitsAllocated = 0
+        mpg.WaveformData = []
         for j in range(len(numsamp)):
-            if labels[j][:3] != 'EEG':  # VERIFY
-                continue
-            for k in range(numsamp[j]):
-                try:
-                    dws[i*numsamp[j]+k].NumberOfWaveformChannels += 1
-                except IndexError:
-                    wsi = dataset.Dataset()
-                    wsi.NumberOfWaveformChannels = 1
-                    wsi.SamplingFrequency = numsamp[j] // recsec
-                    wsi.ChannelDefinitionSequence = sequence.Sequence()
-                    dws.append(wsi)
-                wch = dataset.Dataset()
-                wch.ChannelLabel = labels[j]
-                rc = edf[headend+lenrec*i+np.sum(numsamp)*j+lensamp*k:
-                         headend+lenrec*i+np.sum(numsamp)*j+lensamp*(k+1)]
-                wch.ChannelSensitivity = int.from_bytes(rc, 'little')  # VERIFY
-                wch.ChannelSensitivityUnitsSequence = sequence.Sequence()
-                wun = dataset.Dataset()
-                wun.CodeValue = units[j]
-                wch.ChannelSensitivityUnitsSequence.append(wun)
-                dws[i*numsamp[j]+k].ChannelDefinitionSequence.append(wch)
+            if numsamp[j] != numsamp[0]:
+                continue  # VERIFY
+            mpg.NumberOfWaveformChannels += 1
+            wch = dataset.Dataset()
+            wch.ChannelLabel = labels[j]
+            wch.ChannelSensitivityUnitsSequence = sequence.Sequence()
+            wun = dataset.Dataset()
+            wun.CodeValue = units[j]
+            wch.ChannelSensitivityUnitsSequence.append(wun)
+            mpg.ChannelDefinitionSequence.append(wch)
+        for k in range(numsamp[0]):
+            mpg.WaveformData.append([])
+            for j in range(len(numsamp)):
+                if numsamp[j] != numsamp[0]:
+                    continue  # VERIFY
+                rc = edf[headend+lenrec*i+np.sum(numsamp[:j+1])*lensamp +
+                         lensamp*k:
+                         headend+lenrec*i+np.sum(numsamp[:j+1])*lensamp +
+                         lensamp*(k+1)]
+                if k == 0:
+                    mpg.WaveformBitsAllocated += len(rc) * 8
+                mpg.WaveformData[k].append(rc)
+        mpg.WaveformData = np.array(mpg.WaveformData)
+        dws.append(mpg)
     ds.WaveformSequence = dws
     filewriter.dcmwrite(dicomname, ds)
 
