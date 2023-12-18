@@ -60,7 +60,54 @@ def dicom2edf(dicomname, edfname):
     outfile.write(rightpad('1', 8))  # VERIFY
     outfile.write(rightpad(str(ds.WaveformSequence[0].
                                NumberOfWaveformChannels), 4))
-    # EXPAND
+    # Label
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(rightpad(a.ChannelLabel, 16))
+    # Transducer type
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(bytes(' ' * 80, 'ascii'))  # PLACEHOLDER
+    # Units
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(rightpad(a.ChannelSensitivityUnitsSequence[0].CodeValue,
+                               8))
+    # Physical min
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(bytes(' ' * 8, 'ascii'))  # PLACEHOLDER
+    # Physical max
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(bytes(' ' * 8, 'ascii'))  # PLACEHOLDER
+    # Digital min
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(rightpad(str(-2 ** (ds.WaveformSequence[0].
+                                          WaveformBitsAllocated //
+                                          ds.WaveformSequence[0].
+                                          NumberOfWaveformChannels - 1)), 8))
+    # Digital max
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(rightpad(str(2 ** (ds.WaveformSequence[0].
+                                         WaveformBitsAllocated //
+                                         ds.WaveformSequence[0].
+                                         NumberOfWaveformChannels - 1) - 1),
+                               8))
+    # Prefiltering
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(bytes(' ' * 80, 'ascii'))  # PLACEHOLDER
+    # Samples per record
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(rightpad(str(ds.WaveformSequence[0].
+                                   NumberOfWaveformSamples), 8))
+    # Reserved
+    for a in ds.WaveformSequence[0].ChannelDefinitionSequence:
+        outfile.write(bytes(' ' * 32, 'ascii'))  # PLACEHOLDER
+    # Data records
+    k = (ds.WaveformSequence[0].WaveformBitsAllocated //
+         ds.WaveformSequence[0].NumberOfWaveformChannels) // 8
+    for a in ds.WaveformSequence:
+        for i in range(a.NumberOfWaveformChannels):
+            for j in range(a.NumberOfWaveformSamples):
+                outfile.write(a.WaveformData[j*a.WaveformBitsAllocated//8+i*k:
+                                             j*a.WaveformBitsAllocated//8+i*k +
+                                             k])
     outfile.close()
 
 
