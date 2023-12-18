@@ -105,10 +105,14 @@ def edf2dicom(edfname, dicomname):
             for j in range(len(numsamp)):
                 if numsamp[j] != numsamp[0]:
                     continue  # VERIFY
-                rc = edf[headend+lenrec*i+np.sum(numsamp[:j+1])*lensamp +
-                         lensamp*k:
-                         headend+lenrec*i+np.sum(numsamp[:j+1])*lensamp +
-                         lensamp*(k+1)]
+                if j == 0:
+                    rc = edf[headend+lenrec*i + lensamp*k:
+                             headend+lenrec*i + lensamp*(k+1)]
+                else:
+                    rc = edf[headend+lenrec*i+np.sum(numsamp[:j])*lensamp +
+                             lensamp*k:
+                             headend+lenrec*i+np.sum(numsamp[:j])*lensamp +
+                             lensamp*(k+1)]
                 if k == 0:
                     mpg.WaveformBitsAllocated += len(rc) * 8
                 mpg.WaveformData[k].append(rc)
