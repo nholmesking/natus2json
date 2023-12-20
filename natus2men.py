@@ -1,0 +1,144 @@
+# Nathan Holmes-King
+# 2023-12-19
+
+import sys
+import math
+import numpy as np
+
+"""
+WORK IN PROGRESS.
+
+Command-line arguments:
+1. input file
+2. output file
+3. MEN version (int or letter)
+
+PEP-8 compliant.
+"""
+
+
+mv = {'A': 1,
+      'B': 2}
+
+
+def natus2men(inname, outname, menv):
+    try:
+        menv = int(menv)
+    except ValueError:
+        try:
+            menv = mv[menv]
+        except KeyError:
+            print('ERROR: invalid MEN version.')
+            return
+    infile = open(inname, 'rb')
+    natus = infile.read()
+    infile.close()
+    men = open(outname, 'wb')
+    men.write(natus[:16])  # File GUID
+    schema = int.from_bytes(natus[16:18], byteorder='little')
+    men.write(b'\x00')  # File version
+    men.write(menv.to_bytes(1, 'little'))  # MEN type
+    men.write(natus[20:24] + b'\x00' * 4)  # Creation time, 64-bit
+    men.write(natus[24:32])
+    for i in [32, 112, 192, 272]:
+        j = i
+        while natus[j] != 0:
+            j += 1
+        men.write((j-i).to_bytes(1, 'little'))
+        men.write(natus[i:j])
+    men.write(natus[352:360])
+    men.write(natus[360:362])  # Number of channels
+    nc = int.from_bytes(natus[360:362], byteorder='little')
+    if schema == 9:
+        for i in range(nc):
+            men.write(natus[368+i*4:370+i*4])
+    nh = 0
+    for i in range(4):
+        if int.from_bytes(natus[4464+i*4:4464+i*4+4], byteorder='little') != 0:
+            nh += 1
+    for i in range(nh):  # Headbox type
+        men.write(natus[4464+i*4:4464+i*4+4])
+    for i in range(nh):  # Headbox SN
+        men.write(natus[4480+i*4:4480+i*4+4])
+    for i in range(nh):  # Headbox SW version
+        men.write(natus[4496+i*10:4496+i*10+10])
+    men.write(natus[4536:4557])
+    shrt = []
+    while len(shrt) < nc:
+        shrt.append(0)
+    for i in range(nc):
+        if natus[4560+i*2] == 0:
+            continue
+        else:
+            shrt[math.floor(i/8)] += 2 ** (i % 8)
+    men.write(natus[6608:6608+nc*2])
+    fqb = False
+    for i in range(1024):
+        if (int.from_bytes(natus[6608+i*2:6608+i*2+2],
+                           byteorder='little') != 32767):
+            fqb = True
+    j = 8656
+    while j < len(natus):
+        men.write(natus[j:j+1])  # Event byte
+        j += 1
+        if fqb:
+            men.write(natus[j:j+1])  # Frequency byte
+            j += 1
+        deltaMask = []
+        for i in range(int(nc / 8 + 0.5)):
+            bits = []
+            nn = natus[j+i]
+            for k in range(8):
+                if nn >= 2 ** (7-k):
+                    bits.insert(0, 1)
+                    nn -= 2 ** (7-k)
+                else:
+                    bits.insert(0, 0)
+            for a in bits:
+                deltaMask.append(a)
+        j += int(nc / 8 + 0.5)
+        if j >= len(natus):
+            break
+        numBytes = []
+        outp = []
+        for a in deltaMask:
+            if a == 0:
+                numBytes.append(0)
+                outp.append(natus[j:j+1])
+                j += 1
+            elif a == 1:
+                if natus[j] == 0 and natus[j+1] == 128:
+                    numBytes.append(3)
+                else:
+                    numBytes.append(1)
+                outp.append(natus[j:j+2])
+                j += 2
+        k = nc - 1
+        while k >= 0:
+            if shrt[k] == 1:
+                del numBytes[k]
+            k -= 1
+        for i in range(len(numBytes)):
+            if numBytes[i] == 3:
+                if natus[j+3] == 0:
+                    numBytes[i] = 2
+                    outp[i] = natus[j:j+3]
+                else:
+                    outp[i] = natus[j:j+4]
+                j += 4
+        while len(numBytes) % 4 != 0:
+            numBytes.append(0)
+        bt = 0
+        for i in range(len(numBytes)):
+            bt += numBytes[i] * 2 ** ((i % 4) * 2)
+            if i % 4 == 3:
+                men.write(bt.to_bytes(1, 'little'))
+                bt = 0
+        for a in outp:
+            for b in a:
+                men.write(b.to_bytes(1, 'little'))
+    men.close()
+
+
+if __name__ == '__main__':
+    natus2men(sys.argv[1], sys.argv[2], sys.argv[3])
