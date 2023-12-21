@@ -52,32 +52,37 @@ def natus2men(inname, outname, menv):
     if schema == 9:
         for i in range(nc):
             men.write(natus[368+i*4:370+i*4])
-    nh = 0
-    for i in range(4):
-        if int.from_bytes(natus[4464+i*4:4464+i*4+4], byteorder='little') != 0:
-            nh += 1
-    for i in range(nh):  # Headbox type
-        men.write(natus[4464+i*4:4464+i*4+4])
-    for i in range(nh):  # Headbox SN
-        men.write(natus[4480+i*4:4480+i*4+4])
-    for i in range(nh):  # Headbox SW version
-        men.write(natus[4496+i*10:4496+i*10+10])
-    men.write(natus[4536:4557])
-    shrt = []  # To write to MEN file
-    while len(shrt) < nc:
-        shrt.append(0)
-    shorted = []  # To keep track of for rest of Python program
-    for i in range(nc):
-        if natus[4560+i*2] == 1:
-            shrt[math.floor(i/8)] += 2 ** (i % 8)
-        shorted.append(natus[4560+i*2])
-    men.write(natus[6608:6608+nc*2])
-    fqb = False
-    for i in range(1024):
-        if (int.from_bytes(natus[6608+i*2:6608+i*2+2],
-                           byteorder='little') != 32767):
-            fqb = True
-    j = 8656
+        nh = 0
+        for i in range(4):
+            if (int.from_bytes(natus[4464+i*4:4464+i*4+4],
+                               byteorder='little') != 0):
+                nh += 1
+        men.write(bytes([nh]))
+        for i in range(nh):  # Headbox type
+            men.write(natus[4464+i*4:4464+i*4+4])
+        for i in range(nh):  # Headbox SN
+            men.write(natus[4480+i*4:4480+i*4+4])
+        for i in range(nh):  # Headbox SW version
+            men.write(natus[4496+i*10:4496+i*10+10])
+        men.write(natus[4536:4557])
+        shrt = []  # To write to MEN file
+        while len(shrt) < nc:
+            shrt.append(0)
+        shorted = []  # To keep track of for rest of Python program
+        for i in range(nc):
+            if natus[4560+i*2] == 1:
+                shrt[math.floor(i/8)] += 2 ** (i % 8)
+            shorted.append(natus[4560+i*2])
+        men.write(natus[6608:6608+nc*2])
+        fqb = False
+        for i in range(1024):
+            if (int.from_bytes(natus[6608+i*2:6608+i*2+2],
+                               byteorder='little') != 32767):
+                fqb = True
+        j = 8656
+    else:
+        print('ERROR: unsupported file schema.')
+        return
     while j < len(natus):
         men.write(natus[j:j+1])  # Event byte
         j += 1
