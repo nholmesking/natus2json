@@ -63,14 +63,14 @@ def natus2men(inname, outname, menv):
     for i in range(nh):  # Headbox SW version
         men.write(natus[4496+i*10:4496+i*10+10])
     men.write(natus[4536:4557])
-    shrt = []
+    shrt = []  # To write to MEN file
     while len(shrt) < nc:
         shrt.append(0)
+    shorted = []  # To keep track of for rest of Python program
     for i in range(nc):
-        if natus[4560+i*2] == 0:
-            continue
-        else:
+        if natus[4560+i*2] == 1:
             shrt[math.floor(i/8)] += 2 ** (i % 8)
+        shorted.append(natus[4560+i*2])
     men.write(natus[6608:6608+nc*2])
     fqb = False
     for i in range(1024):
@@ -97,27 +97,21 @@ def natus2men(inname, outname, menv):
             for a in bits:
                 deltaMask.append(a)
         j += int(nc / 8 + 0.5)
-        if j >= len(natus):
-            break
         numBytes = []
         outp = []
-        for a in deltaMask:
-            if a == 0:
-                numBytes.append(0)
-                outp.append(natus[j:j+1])
-                j += 1
-            elif a == 1:
-                if natus[j] == 0 and natus[j+1] == 128:
-                    numBytes.append(3)
-                else:
-                    numBytes.append(1)
-                outp.append(natus[j:j+2])
-                j += 2
-        k = nc - 1
-        while k >= 0:
-            if shrt[k] == 1:
-                del numBytes[k]
-            k -= 1
+        for i in range(len(shorted)):
+            if shorted[i] == 0:
+                if deltaMask[i] == 0:
+                    numBytes.append(0)
+                    outp.append(natus[j:j+1])
+                    j += 1
+                elif deltaMask[i] == 1:
+                    if natus[j] == 0 and natus[j+1] == 128:
+                        numBytes.append(3)
+                    else:
+                        numBytes.append(1)
+                    outp.append(natus[j:j+2])
+                    j += 2
         for i in range(len(numBytes)):
             if numBytes[i] == 3:
                 if natus[j+3] == 0:
