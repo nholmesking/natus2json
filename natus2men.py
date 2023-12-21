@@ -66,14 +66,15 @@ def natus2men(inname, outname, menv):
             men.write(natus[4496+i*10:4496+i*10+10])
         men.write(natus[4536:4557])
         shrt = []  # To write to MEN file
-        while len(shrt) < nc:
+        while len(shrt) < nc / 8:
             shrt.append(0)
         shorted = []  # To keep track of for rest of Python program
         for i in range(nc):
             if natus[4560+i*2] == 1:
                 shrt[math.floor(i/8)] += 2 ** (i % 8)
             shorted.append(natus[4560+i*2])
-        men.write(natus[6608:6608+nc*2])
+        men.write(bytes(shrt))  # Shorted
+        men.write(natus[6608:6608+nc*2])  # Frequency factor
         fqb = False
         for i in range(1024):
             if (int.from_bytes(natus[6608+i*2:6608+i*2+2],
