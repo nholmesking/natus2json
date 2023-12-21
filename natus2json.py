@@ -27,7 +27,7 @@ def toInt(lst):
     for i in range(len(lst)):
         t += lst[i] * 2 ** (i * 8)
     if lst[len(lst)-1] > 127:
-        t -= (2 ** (len(lst) * 8) - 1)
+        t -= 2 ** (len(lst) * 8)
     return str(t)
 
 
