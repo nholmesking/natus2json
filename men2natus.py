@@ -95,6 +95,10 @@ def men2natus(inname, outname):
         s += b'\x00' * 2
     natus.write(s)
     j += math.ceil(nc/8)
+    s = men[j:j+nc*2]
+    while len(s) < 2048:
+        s += b'\xff\x7f'
+    natus.write(s)
 
 
 if __name__ == '__main__':
