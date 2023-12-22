@@ -14,8 +14,8 @@ Files:
 - json2dicom_altered.py: inputs a JSON (from Natus ERD files) and generates a nonstandard version of DICOM that uses less than half the amount of memory as the standard version.
 - edf2dicom.py: inputs an EDF and converts it to standard DICOM. Assumes EDF+ from Natus ERD.
 - dicom2edf.py: reverses edf2dicom.py.
-- natus2men.py: converts Natus ERD into Memory-Efficient Natus (MEN) format.
-- men2natus.py: reverses natus2men.py. Currently incomplete.
+- natus2men.py: converts Natus ERD into Memory-Efficient Natus (MEN) format. Currently only supports MEN-A.
+- men2natus.py: reverses natus2men.py. Currently only supports MEN-A.
 
 See also:
 - Document outlining results: https://docs.google.com/document/d/1vsgSZQMatsJYphpQt628trsgjX6-iKG2NcAN6Uziidk/edit?usp=sharing
