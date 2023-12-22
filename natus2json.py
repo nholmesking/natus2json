@@ -541,7 +541,7 @@ def natus2json(filename, jsonname):
             j += num_channels
             # Absolute channel values
             for i in range(len(r)):
-                if r[i] == -128:
+                if r[i] == -1:
                     r[i] = int(toInt(natus[j:j+4]))
                     j += 4
             s = '{'
@@ -695,7 +695,7 @@ def natus2json(filename, jsonname):
             j += num_channels
             # Absolute channel values
             for i in range(len(r)):
-                if r[i] == -128:
+                if r[i] == -1:
                     r[i] = int(toInt(natus[j:j+4]))
                     j += 4
             s = '{'
@@ -847,7 +847,7 @@ def natus2json(filename, jsonname):
             j += num_channels
             # Absolute channel values
             for i in range(len(r)):
-                if r[i] == -128:
+                if r[i] == -1:
                     r[i] = int(toInt(natus[j:j+4]))
                     j += 4
             s = '{'
@@ -1049,7 +1049,7 @@ def natus2json(filename, jsonname):
             j += i
             # Absolute channel values
             for i in range(len(r)):
-                if r[i] == -32768:
+                if r[i] == -1:
                     r[i] = int(toInt(natus[j:j+4]))
                     j += 4
             s = '{'
@@ -1258,7 +1258,7 @@ def natus2json(filename, jsonname):
             j += i
             # Absolute channel values
             for i in range(len(r)):
-                if r[i] == -32768:
+                if r[i] == -1:
                     r[i] = int(toInt(natus[j:j+4]))
                     j += 4
             s = '{'

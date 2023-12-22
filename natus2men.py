@@ -112,7 +112,7 @@ def natus2men(inname, outname, menv):
                     outp.append(natus[j:j+1])
                     j += 1
                 elif deltaMask[i] == 1:
-                    if natus[j] == 0 and natus[j+1] == 128:
+                    if natus[j] == 255 and natus[j+1] == 255:
                         numBytes.append(3)
                     else:
                         numBytes.append(1)
