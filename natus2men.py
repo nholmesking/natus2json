@@ -4,6 +4,7 @@
 import sys
 import math
 import numpy as np
+from men2natus import sepBits
 
 """
 WORK IN PROGRESS.
@@ -19,6 +20,15 @@ PEP-8 compliant.
 
 mv = {'A': 1,
       'B': 2}
+
+
+def comBits(inp):
+    rl = []
+    while len(rl) < len(inp) / 8:
+        rl.append(0)
+    for i in range(len(inp)):
+        rl[int(i/8)] += inp[i] * 2 ** (i % 8)
+    return rl
 
 
 def natus2men(inname, outname, menv):
@@ -84,59 +94,115 @@ def natus2men(inname, outname, menv):
     else:
         print('ERROR: unsupported file schema.')
         return
-    while j < len(natus):
-        men.write(natus[j:j+1])  # Event byte
-        j += 1
-        if fqb:
-            men.write(natus[j:j+1])  # Frequency byte
+    if menv == 1:
+        while j < len(natus):
+            men.write(natus[j:j+1])  # Event byte
             j += 1
-        deltaMask = []
-        for i in range(int(nc / 8 + 0.5)):
-            bits = []
-            nn = natus[j+i]
-            for k in range(8):
-                if nn >= 2 ** (7-k):
-                    bits.insert(0, 1)
-                    nn -= 2 ** (7-k)
-                else:
-                    bits.insert(0, 0)
-            for a in bits:
-                deltaMask.append(a)
-        j += int(nc / 8 + 0.5)
-        numBytes = []
-        outp = []
-        for i in range(len(shorted)):
-            if shorted[i] == 0:
-                if deltaMask[i] == 0:
-                    numBytes.append(0)
-                    outp.append(natus[j:j+1])
-                    j += 1
-                elif deltaMask[i] == 1:
-                    if natus[j] == 255 and natus[j+1] == 255:
-                        numBytes.append(3)
+            if fqb:
+                men.write(natus[j:j+1])  # Frequency byte
+                j += 1
+            deltaMask = []
+            for i in range(int(nc / 8 + 0.5)):
+                bits = []
+                nn = natus[j+i]
+                for k in range(8):
+                    if nn >= 2 ** (7-k):
+                        bits.insert(0, 1)
+                        nn -= 2 ** (7-k)
                     else:
-                        numBytes.append(1)
-                    outp.append(natus[j:j+2])
-                    j += 2
-        for i in range(len(numBytes)):
-            if numBytes[i] == 3:
-                if natus[j+3] == 0:
-                    numBytes[i] = 2
-                    outp[i] = natus[j:j+3]
-                else:
-                    outp[i] = natus[j:j+4]
-                j += 4
-        while len(numBytes) % 4 != 0:
-            numBytes.append(0)
-        bt = 0
-        for i in range(len(numBytes)):
-            bt += numBytes[i] * 2 ** ((i % 4) * 2)
-            if i % 4 == 3:
-                men.write(bt.to_bytes(1, 'little'))
-                bt = 0
-        for a in outp:
-            for b in a:
-                men.write(b.to_bytes(1, 'little'))
+                        bits.insert(0, 0)
+                for a in bits:
+                    deltaMask.append(a)
+            j += int(nc / 8 + 0.5)
+            numBytes = []
+            outp = []
+            for i in range(len(shorted)):
+                if shorted[i] == 0:
+                    if deltaMask[i] == 0:
+                        numBytes.append(0)
+                        outp.append(natus[j:j+1])
+                        j += 1
+                    elif deltaMask[i] == 1:
+                        if natus[j] == 255 and natus[j+1] == 255:
+                            numBytes.append(3)
+                        else:
+                            numBytes.append(1)
+                        outp.append(natus[j:j+2])
+                        j += 2
+            for i in range(len(numBytes)):
+                if numBytes[i] == 3:
+                    if natus[j+3] == 0:
+                        numBytes[i] = 2
+                        outp[i] = natus[j:j+3]
+                    else:
+                        outp[i] = natus[j:j+4]
+                    j += 4
+            while len(numBytes) % 4 != 0:
+                numBytes.append(0)
+            bt = 0
+            for i in range(len(numBytes)):
+                bt += numBytes[i] * 2 ** ((i % 4) * 2)
+                if i % 4 == 3:
+                    men.write(bt.to_bytes(1, 'little'))
+                    bt = 0
+            for a in outp:
+                for b in a:
+                    men.write(b.to_bytes(1, 'little'))
+    elif menv == 2:
+        while j < len(natus):
+            men.write(natus[j:j+1])  # Event byte
+            j += 1
+            if fqb:
+                men.write(natus[j:j+1])  # Frequency byte
+                j += 1
+            deltaMask = []
+            for i in range(int(nc / 8 + 0.5)):
+                bits = []
+                nn = natus[j+i]
+                for k in range(8):
+                    if nn >= 2 ** (7-k):
+                        bits.insert(0, 1)
+                        nn -= 2 ** (7-k)
+                    else:
+                        bits.insert(0, 0)
+                for a in bits:
+                    deltaMask.append(a)
+            j += int(nc / 8 + 0.5)
+            bits = []
+            for i in range(len(shorted)):
+                if shorted[i] == 0:
+                    if deltaMask[i] == 0:
+                        sb = sepBits(natus[j:j+1])
+                        k = 6
+                        while k >= 0 and sb[k] == 0:
+                            k -= 1
+                        bits.append([sb[7]] + sb[:k+1])
+                        j += 1
+                    elif deltaMask[i] == 1:
+                        if natus[j] == 255 and natus[j+1] == 255:
+                            bits.append([])
+                        else:
+                            sb = sepBits(natus[j:j+2])
+                            k = 14
+                            while k >= 0 and sb[k] == 0:
+                                k -= 1
+                            bits.append([sb[15]] + sb[:k+1])
+                        j += 2
+            for i in range(len(bits)):
+                if len(bits[i]) == 0:
+                    sb = sepBits(natus[j:j+4])
+                    k = 30
+                    while k >= 0 and sb[k] == 0:
+                        k -= 1
+                    bits[i] = [sb[31]] + sb[:k+1]
+                    j += 4
+            outp = []
+            for a in bits:
+                for b in sepBits([len(a)-1])[:5]:
+                    outp.append(b)
+                for b in a[:len(a)-1]:
+                    outp.append(b)
+            men.write(bytes(comBits(outp)))
     men.close()
 
 
