@@ -4,7 +4,6 @@
 import sys
 import math
 import numpy as np
-from men2natus import sepBits
 
 """
 WORK IN PROGRESS.
@@ -20,6 +19,19 @@ PEP-8 compliant.
 
 mv = {'A': 1,
       'B': 2}
+
+
+def sepBits(byt):
+    rl = []
+    for i in range(len(byt)):
+        bi = byt[i]
+        for k in range(8):
+            if bi % 2 == 1:
+                rl.append(1)
+            else:
+                rl.append(0)
+            bi = int(bi / 2)
+    return rl
 
 
 def comBits(inp):
