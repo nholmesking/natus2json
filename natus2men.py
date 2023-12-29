@@ -4,6 +4,7 @@
 import sys
 import math
 import numpy as np
+import time
 
 """
 WORK IN PROGRESS.
@@ -219,4 +220,7 @@ def natus2men(inname, outname, menv):
 
 
 if __name__ == '__main__':
+    st = time.time()
     natus2men(sys.argv[1], sys.argv[2], sys.argv[3])
+    et = time.time()
+    print('DONE', round(et - st, 2), 's')
