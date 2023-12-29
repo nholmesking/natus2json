@@ -3,6 +3,9 @@
 
 import sys
 import math
+from natus2men import comBits
+from natus2men import sepBits
+import time
 
 """
 WORK IN PROGRESS.
@@ -13,19 +16,6 @@ Command-line arguments:
 
 PEP-8 compliant.
 """
-
-
-def sepBits(byt):
-    rl = []
-    for i in range(len(byt)):
-        bi = byt[i]
-        for k in range(8):
-            if bi % 2 == 1:
-                rl.append(1)
-            else:
-                rl.append(0)
-            bi = int(bi / 2)
-    return rl
 
 
 def men2natus(inname, outname):
@@ -103,49 +93,96 @@ def men2natus(inname, outname):
         s += b'\xff\x7f'
     j += nc * 2
     natus.write(s)
-    while j < len(men):
-        natus.write(men[j:j+1])  # Event byte
-        j += 1
-        nb = men[j:j+math.ceil(nactc/4)]
-        numbytes = []
-        for a in nb:
-            bc = a
-            for i in range(4):
-                numbytes.append(bc % 4)
-                bc //= 4
-        j += math.ceil(nactc/4)
-        deltamask = []
-        k = 0
-        for i in range(nc):
-            if sb[i] == 1:
+    headend = j
+    if mv == 1:
+        while j < len(men):
+            natus.write(men[j:j+1])  # Event byte
+            j += 1
+            nb = men[j:j+math.ceil(nactc/4)]
+            numbytes = []
+            for a in nb:
+                bc = a
+                for i in range(4):
+                    numbytes.append(bc % 4)
+                    bc //= 4
+            j += math.ceil(nactc/4)
+            deltamask = []
+            k = 0
+            for i in range(nc):
+                if sb[i] == 1:
+                    deltamask.append(1)
+                else:
+                    if numbytes[k] == 0:
+                        deltamask.append(0)
+                    else:
+                        deltamask.append(1)
+                    k += 1
+            while len(deltamask) % 8 != 0:
                 deltamask.append(1)
-            else:
-                if numbytes[k] == 0:
+            dm = []
+            while len(dm) < nc/8:
+                dm.append(0)
+            for i in range(len(deltamask)):
+                dm[int(i/8)] += deltamask[i] * 2 ** (i % 8)
+            natus.write(bytes(dm))
+            acv = []
+            for i in range(nactc):
+                if numbytes[i] < 2:
+                    natus.write(men[j:j+numbytes[i]+1])
+                else:
+                    acv.append(men[j:j+numbytes[i]+1])
+                    natus.write(bytes([255, 255]))
+                j += numbytes[i] + 1
+            for a in acv:
+                natus.write(a)
+                if len(a) == 3:
+                    natus.write(b'\x00')
+    elif mv == 2:
+        sb = sepBits(men[j:])
+        while j < len(men):
+            natus.write(men[j:j+1])  # Event byte
+            j += 1
+            deltamask = []
+            bval = []
+            acv = []
+            k = 0
+            i = (j - headend) * 8
+            while k < nactc:
+                ln = comBits(sb[i:i+5])[0]
+                sn = sb[i+5]
+                i += 6
+                if ln < 8:
                     deltamask.append(0)
+                    so = sb[i:ln-1] + [1]
+                    while len(so) < 7:
+                        so.append(0)
+                    so.append(sn)
+                    bval += comBits(so)
+                elif ln < 16:
+                    deltamask.append(1)
+                    so = sb[i:ln-1] + [1]
+                    while len(so) < 15:
+                        so.append(0)
+                    so.append(sn)
+                    bval += comBits(so)
                 else:
                     deltamask.append(1)
+                    bval += [255, 255]
+                    so = sb[i:ln-1] + [1]
+                    while len(so) < 31:
+                        so.append(0)
+                    so.append(sn)
+                    acv += comBits(so)
+                i += ln - 1
                 k += 1
-        while len(deltamask) % 8 != 0:
-            deltamask.append(1)
-        dm = []
-        while len(dm) < nc/8:
-            dm.append(0)
-        for i in range(len(deltamask)):
-            dm[int(i/8)] += deltamask[i] * 2 ** (i % 8)
-        natus.write(bytes(dm))
-        acv = []
-        for i in range(nactc):
-            if numbytes[i] < 2:
-                natus.write(men[j:j+numbytes[i]+1])
-            else:
-                acv.append(men[j:j+numbytes[i]+1])
-                natus.write(bytes([255, 255]))
-            j += numbytes[i] + 1
-        for a in acv:
-            natus.write(a)
-            if len(a) == 3:
-                natus.write(b'\x00')
+            natus.write(bytes(comBits(deltamask)))
+            natus.write(bytes(bval))
+            natus.write(bytes(acv))
+            j = math.ceil(i/8) + headend
 
 
 if __name__ == '__main__':
+    st = time.time()
     men2natus(sys.argv[1], sys.argv[2])
+    et = time.time()
+    print('DONE', round(et - st, 2), 's')
