@@ -32,8 +32,14 @@ months = {1: 'JAN',
 
 
 def dicom2edf(dicomname, edfname):
+    """
+    Main function.
+    """
+    # Read DICOM file
     ds = dcmread(dicomname, force=True)
+    # Open EDF file
     outfile = open(edfname, 'wb')
+    # Write header
     outfile.write(bytes(' ' * 8, 'ascii'))  # PLACEHOLDER
     lpid = (ds.PatientID + ' ' + ds.PatientSex + ' ' +
             ds.PatientBirthDate[6:8] + '-' +
