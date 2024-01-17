@@ -35,14 +35,20 @@ months = {'JAN': '01',
 
 
 def edf2dicom(edfname, dicomname):
+    """
+    Main function.
+    """
+    # Initialize dataset
     ds = dataset.Dataset()
     ds.is_little_endian = True  # VERIFY
     ds.is_implicit_VR = False  # VERIFY
     ds.Modality = 'EEG'
     ds.Manufacturer = 'Natus'
+    # Read from input file
     infile = open(edfname, 'rb')
     edf = infile.read()
     infile.close()
+    # Add patient personal information to dataset
     pinfo = encode(edf[8:88]).split(' ')
     ds.PatientID = pinfo[0]
     ds.PatientSex = pinfo[1]
@@ -57,6 +63,7 @@ def edf2dicom(edfname, dicomname):
         ds.PatientName = pn[0] + '^' + pn[1]
     except IndexError:
         pass
+    # Add study information to dataset
     studydt = encode(edf[168:184])
     if int(studydt[6:8]) < 85:
         sdstr = '20'
@@ -65,23 +72,23 @@ def edf2dicom(edfname, dicomname):
     sdstr += (studydt[6:8] + '-' + studydt[3:5] + '-' + studydt[:2] + 'T' +
               studydt[8:10] + ':' + studydt[11:13] + ':' + studydt[14:16])
     ds.AcquisitionDateTime = valuerep.DT.fromisoformat(sdstr)
-    numrec = int(encode(edf[236:244]).strip())
+    numrec = int(encode(edf[236:244]).strip())  # Number of records
     recsec = int(encode(edf[244:252]).strip())
-    numsig = int(encode(edf[252:256]).strip())
+    numsig = int(encode(edf[252:256]).strip())  # Number of signals
     headend = 256 * (numsig + 1)
     lenrec = int((len(edf) - headend) / numrec)  # Length of a record in bytes
-    numsamp = []
+    numsamp = []  # Number of samples
     for i in range(numsig):
         numsamp.append(int(encode(edf[256+216*numsig +
                                       8*i:256+216*numsig+8*(i+1)]).strip()))
     lensamp = lenrec // np.sum(numsamp)  # Length of a sample within a record
-    labels = []
+    labels = []  # Channel labels
     for i in range(numsig):
         labels.append(encode(edf[256+16*i:256+16*(i+1)]))
-    units = []
+    units = []  # Units information (uV)
     for i in range(numsig):
         units.append(encode(edf[256+96*numsig+8*i:256+96*numsig+8*(i+1)]))
-    dws = sequence.Sequence()
+    dws = sequence.Sequence()  # Waveform sequence
     for i in range(numrec):
         mpg = dataset.Dataset()  # Multiplex group
         mpg.ChannelDefinitionSequence = sequence.Sequence()
@@ -93,10 +100,10 @@ def edf2dicom(edfname, dicomname):
             if numsamp[j] != numsamp[0]:
                 continue  # VERIFY
             mpg.NumberOfWaveformChannels += 1
-            wch = dataset.Dataset()
+            wch = dataset.Dataset()  # Element of multiplex group
             wch.ChannelLabel = labels[j]
             wch.ChannelSensitivityUnitsSequence = sequence.Sequence()
-            wun = dataset.Dataset()
+            wun = dataset.Dataset()  # Units
             wun.CodeValue = units[j]
             wch.ChannelSensitivityUnitsSequence.append(wun)
             mpg.ChannelDefinitionSequence.append(wch)
@@ -105,20 +112,21 @@ def edf2dicom(edfname, dicomname):
             for j in range(len(numsamp)):
                 if numsamp[j] != numsamp[0]:
                     continue  # VERIFY
-                if j == 0:
+                if j == 0:  # First channel, no offset
                     rc = edf[headend+lenrec*i + lensamp*k:
                              headend+lenrec*i + lensamp*(k+1)]
-                else:
+                else:  # Subsequent channels, with offset from numsamp
                     rc = edf[headend+lenrec*i+np.sum(numsamp[:j])*lensamp +
                              lensamp*k:
                              headend+lenrec*i+np.sum(numsamp[:j])*lensamp +
                              lensamp*(k+1)]
-                if k == 0:
+                if k == 0:  # First record
                     mpg.WaveformBitsAllocated += len(rc) * 8
                 mpg.WaveformData[k].append(rc)
         mpg.WaveformData = np.array(mpg.WaveformData)
         dws.append(mpg)
     ds.WaveformSequence = dws
+    # Write to DICOM file
     filewriter.dcmwrite(dicomname, ds)
 
 
