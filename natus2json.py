@@ -134,19 +134,22 @@ def sepList(lstr):
     lstr = lstr[:len(lstr)-1] + ',)'
     s = ''
     for i in range(len(lstr)):
-        if lstr[i] in ' \n\t' and (not quote):
+        if lstr[i] in ' \n\t' and (not quote):  # Whitespace
             continue
         elif lstr[i] == '(' and (not quote):
+            # Start of element
             paren += 1
             if paren < 2:
                 continue
         elif lstr[i] == ')' and (not quote):
+            # End of element
             paren -= 1
             if paren < 1:
                 continue
         elif lstr[i] == '"' and (i == 0 or lstr[i-1] != '\\' or
                                  (lstr[i-1] == '\\' and i > 1 and
                                   lstr[i-2] == '\\')):
+            # Strings inside quotation marks
             quote = not quote
             if paren < 3:
                 continue
@@ -204,19 +207,22 @@ def sepKeyTree(lstr):
     s = ''
     t = ''
     for i in range(len(lstr)):
-        if lstr[i] in ' \n\t' and (not quote):
+        if lstr[i] in ' \n\t' and (not quote):  # Whitespace
             continue
         elif lstr[i] == '(' and (not quote):
+            # Start of element
             paren += 1
             if paren < 3:
                 continue
         elif lstr[i] == ')' and (not quote):
+            # End of element
             paren -= 1
             if paren < 2:
                 continue
         elif lstr[i] == '"' and (i == 0 or lstr[i-1] != '\\' or
                                  (lstr[i-1] == '\\' and i > 1 and
                                   lstr[i-2] == '\\')):
+            # Strings inside quotation marks
             quote = not quote
             if paren < 3:
                 continue
@@ -231,18 +237,18 @@ def sepKeyTree(lstr):
                     else:
                         try:
                             rd[s] = int(t)
-                            if s in dt_fields:
+                            if s in dt_fields:  # s is datetime
                                 rd[s] = datetime.\
                                     strftime(datetime.
                                              fromtimestamp(rd[s],
                                                            tz=timezone.utc),
                                              '%Y-%m-%dT%H:%M:%SZ')
-                            elif s in bool_fields:
+                            elif s in bool_fields:  # s is boolean
                                 if t == 0:
                                     rd[s] = False
                                 else:
                                     rd[s] = True
-                        except ValueError:
+                        except ValueError:  # Not integer
                             try:
                                 rd[s] = float(t)
                             except ValueError:
