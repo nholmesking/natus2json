@@ -693,6 +693,15 @@ def create_tensor(axes, data_np, id_stage, df, channels, r, rank_acc):
         pickle.dump(age_list, f)
         pickle.dump(Y_para, f)
         pickle.dump(total_R, f)
+        pickle.dump(total_pval, f)
+        pickle.dump(axes, f)
+        pickle.dump(unique_labels, f)
+        pickle.dump(label_index, f)
+        pickle.dump(y_score, f)
+        pickle.dump(data_text, f)
+        pickle.dump(sup_title, f)
+        pickle.dump(SLEEPSTAGE, f)
+        pickle.dump(covariate_list, f)
     #-------------------------------------------
     # Plotting
     #-------------------------------------------
