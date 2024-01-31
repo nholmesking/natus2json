@@ -692,6 +692,7 @@ def create_tensor(axes, data_np, id_stage, df, channels, r, rank_acc):
         pickle.dump(U, f)
         pickle.dump(age_list, f)
         pickle.dump(Y_para, f)
+        pickle.dump(total_R, f)
     #-------------------------------------------
     # Plotting
     #-------------------------------------------
