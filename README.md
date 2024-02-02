@@ -16,6 +16,7 @@ Files:
 - dicom2edf.py: reverses edf2dicom.py.
 - natus2men.py: converts Natus ERD into Memory-Efficient Natus (MEN) format. Currently only supports MEN-A.
 - men2natus.py: reverses natus2men.py. Currently only supports MEN-A.
+- supcp2tkinter.py: creates a Tkinter visualization from SupCP data.
 
 See also:
 - Document outlining results: https://docs.google.com/document/d/1vsgSZQMatsJYphpQt628trsgjX6-iKG2NcAN6Uziidk/edit?usp=sharing
