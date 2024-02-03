@@ -18,6 +18,25 @@ PEP-8 compliant.
 """
 
 
+def scrollDown(event):
+    global tk
+    global c
+    global factor
+    global chart
+    factor += 1
+    drawChart(tk, c, factor, chart)
+
+
+def scrollUp(event):
+    global tk
+    global c
+    global factor
+    global chart
+    if factor > 0:
+        factor -= 1
+    drawChart(tk, c, factor, chart)
+
+
 def drawChart(tk, c, factor, chart):
     """
     In this function, "factor" is the position within all_indices.
@@ -26,6 +45,7 @@ def drawChart(tk, c, factor, chart):
     global height
     global all_indices
     global axes
+    c.delete('all')
     if chart == 0:
         c.create_line(width/2, 100, width/2, height)  # Center vertical line
         c.create_line(0, 100, width, 100)  # Top horizontal line
@@ -35,7 +55,6 @@ def drawChart(tk, c, factor, chart):
         for i in range(len(x)):
             c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
                                i * 40 + 140, fill='#00f')
-            print(x[i])
             if x[i] < 0:
                 c.create_text(width/2 + 5, i * 40 + 130,
                               text=axes['Feature'][i], anchor='w')
@@ -48,14 +67,17 @@ def drawChart(tk, c, factor, chart):
         inc = 10 ** np.ceil(np.log10(50 / xscale))
         n = 1
         while n * inc * xscale < width / 2:
+            txt = n * inc
+            if inc < 1:
+                txt = round(txt, int(-np.ceil(np.log10(50 / xscale))))
             c.create_line(width/2 + n * inc * xscale, 100,
                           width/2 + n * inc * xscale, 90)
-            c.create_text(width/2 + n * inc * xscale, 85, text=str(n * inc),
+            c.create_text(width/2 + n * inc * xscale, 85, text=str(txt),
                           anchor='s')
             c.create_line(width/2 - n * inc * xscale, 100,
                           width/2 - n * inc * xscale, 90)
             c.create_text(width/2 - n * inc * xscale, 85,
-                          text='-' + str(n * inc), anchor='s')
+                          text='-' + str(txt), anchor='s')
             n += 1
     return
 
@@ -84,7 +106,11 @@ if __name__ == '__main__':
     height = int(sys.argv[2])
     c = Canvas(width=width, height=height)
     c.pack()
+    c.bind_all('<KeyPress-Up>', scrollUp)
+    c.bind_all('<KeyPress-Down>', scrollDown)
     k = rank_indices[rank-1]
+    factor = 0
+    chart = 0
     for i in range(len(V)):
         for j in range(len(V[i])):
             V[i][j, k] = np.mean(V[i][j, 0:])
@@ -92,5 +118,5 @@ if __name__ == '__main__':
     all_indices[0] = k
     for i in range(1, rank):
         all_indices[i] = rank_indices[i-1]
-    drawChart(tk, c, 0, 0)
+    drawChart(tk, c, factor, chart)
     input()
