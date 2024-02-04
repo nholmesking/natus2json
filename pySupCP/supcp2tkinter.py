@@ -47,6 +47,8 @@ def drawChart(tk, c, factor, chart):
     global axes
     c.delete('all')
     if chart == 0:
+        c.create_text(width/2, 50, anchor='s', font=('Helvetica', 24),
+                      text='Factor ' + str(all_indices[factor]))
         c.create_line(width/2, 100, width/2, height)  # Center vertical line
         c.create_line(0, 100, width, 100)  # Top horizontal line
         x = V[0][:, all_indices[factor]]
