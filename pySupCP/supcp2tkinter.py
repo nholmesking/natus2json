@@ -37,6 +37,25 @@ def scrollUp(event):
     drawChart(tk, c, factor, chart)
 
 
+def scrollRight(event):
+    global tk
+    global c
+    global factor
+    global chart
+    chart += 1
+    drawChart(tk, c, factor, chart)
+
+
+def scrollLeft(event):
+    global tk
+    global c
+    global factor
+    global chart
+    if chart > 0:
+        chart -= 1
+    drawChart(tk, c, factor, chart)
+
+
 def drawChart(tk, c, factor, chart):
     """
     In this function, "factor" is the position within all_indices.
@@ -46,41 +65,58 @@ def drawChart(tk, c, factor, chart):
     global all_indices
     global axes
     c.delete('all')
+    c.create_text(width/3, 50, anchor='s', font=('Helvetica', 24),
+                  text='\u2191 Factor ' + str(all_indices[factor]) + ' \u2193')
     if chart == 0:
-        c.create_text(width/2, 50, anchor='s', font=('Helvetica', 24),
-                      text='Factor ' + str(all_indices[factor]))
-        c.create_line(width/2, 100, width/2, height)  # Center vertical line
-        c.create_line(0, 100, width, 100)  # Top horizontal line
-        x = V[0][:, all_indices[factor]]
-        xscale = (width * 0.4) / max(max(x), abs(min(x)))
-        # Bars
+        lab = 'Features'
+    elif chart == 1:
+        lab = 'Channels'
+    c.create_text(2*width/3, 50, anchor='s', font=('Helvetica', 24),
+                  text='\u2190 ' + lab + ' \u2192')
+    c.create_line(width/2, 100, width/2, height)  # Center vertical line
+    c.create_line(0, 100, width, 100)  # Top horizontal line
+    if chart == 0 or chart == 1:
+        x = V[chart][:, all_indices[factor]]
+    xscale = (width * 0.4) / max(max(x), abs(min(x)))
+    # Bars
+    if chart == 0:
         for i in range(len(x)):
             c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
-                               i * 40 + 140, fill='#00f')
+                               i * 40 + 140, fill='#000')
             if x[i] < 0:
                 c.create_text(width/2 + 5, i * 40 + 130,
                               text=axes['Feature'][i], anchor='w')
             else:
                 c.create_text(width/2 - 5, i * 40 + 130,
                               text=axes['Feature'][i], anchor='e')
-        # X scale
-        c.create_line(width/2, 100, width/2, 90)
-        c.create_text(width/2, 85, text='0', anchor='s')
-        inc = 10 ** np.ceil(np.log10(50 / xscale))
-        n = 1
-        while n * inc * xscale < width / 2:
-            txt = n * inc
-            if inc < 1:
-                txt = round(txt, int(-np.ceil(np.log10(50 / xscale))))
-            c.create_line(width/2 + n * inc * xscale, 100,
-                          width/2 + n * inc * xscale, 90)
-            c.create_text(width/2 + n * inc * xscale, 85, text=str(txt),
-                          anchor='s')
-            c.create_line(width/2 - n * inc * xscale, 100,
-                          width/2 - n * inc * xscale, 90)
-            c.create_text(width/2 - n * inc * xscale, 85,
-                          text='-' + str(txt), anchor='s')
-            n += 1
+    elif chart == 1:
+        for i in range(len(x)):
+            c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
+                               i * 40 + 140, fill='#000')
+            if x[i] < 0:
+                c.create_text(width/2 + 5, i * 40 + 130,
+                              text=axes['Channel'][i], anchor='w')
+            else:
+                c.create_text(width/2 - 5, i * 40 + 130,
+                              text=axes['Channel'][i], anchor='e')
+    # X scale
+    c.create_line(width/2, 100, width/2, 90)
+    c.create_text(width/2, 85, text='0', anchor='s')
+    inc = 10 ** np.ceil(np.log10(50 / xscale))
+    n = 1
+    while n * inc * xscale < width / 2:
+        txt = n * inc
+        if inc < 1:
+            txt = round(txt, int(-np.ceil(np.log10(50 / xscale))))
+        c.create_line(width/2 + n * inc * xscale, 100,
+                      width/2 + n * inc * xscale, 90)
+        c.create_text(width/2 + n * inc * xscale, 85, text=str(txt),
+                      anchor='s')
+        c.create_line(width/2 - n * inc * xscale, 100,
+                      width/2 - n * inc * xscale, 90)
+        c.create_text(width/2 - n * inc * xscale, 85,
+                      text='-' + str(txt), anchor='s')
+        n += 1
     return
 
 
@@ -110,6 +146,8 @@ if __name__ == '__main__':
     c.pack()
     c.bind_all('<KeyPress-Up>', scrollUp)
     c.bind_all('<KeyPress-Down>', scrollDown)
+    c.bind_all('<KeyPress-Left>', scrollLeft)
+    c.bind_all('<KeyPress-Right>', scrollRight)
     k = rank_indices[rank-1]
     factor = 0
     chart = 0
