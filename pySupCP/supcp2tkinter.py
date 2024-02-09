@@ -86,7 +86,7 @@ def drawChart(tk, c, mode, factor, chart):
         if chart == 0:
             xlabels = axes['Feature']
         elif chart == 1:
-            xlabels = axes['Channels']
+            xlabels = axes['Channel']
         elif chart == 2:
             if len(x) == 7:
                 xlabels = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
