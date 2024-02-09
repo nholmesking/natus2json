@@ -71,11 +71,13 @@ def drawChart(tk, c, factor, chart):
         lab = 'Features'
     elif chart == 1:
         lab = 'Channels'
+    elif chart == 2:
+        lab = 'Frequency'
     c.create_text(2*width/3, 50, anchor='s', font=('Helvetica', 24),
                   text='\u2190 ' + lab + ' \u2192')
     c.create_line(width/2, 100, width/2, height)  # Center vertical line
     c.create_line(0, 100, width, 100)  # Top horizontal line
-    if chart == 0 or chart == 1:
+    if chart in [0, 1, 2]:
         x = V[chart][:, all_indices[factor]]
     xscale = (width * 0.4) / max(max(x), abs(min(x)))
     # Bars
@@ -99,6 +101,20 @@ def drawChart(tk, c, factor, chart):
             else:
                 c.create_text(width/2 - 5, i * 40 + 130,
                               text=axes['Channel'][i], anchor='e')
+    elif chart == 2:
+        if len(x) == 7:
+            xlabels = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
+        else:
+            xlabels = ['d', 'th', 'al', 'be', 'g', 'g+']
+        for i in range(len(x)):
+            c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
+                               i * 40 + 140, fill='#000')
+            if x[i] < 0:
+                c.create_text(width/2 + 5, i * 40 + 130,
+                              text=xlabels[i], anchor='w')
+            else:
+                c.create_text(width/2 - 5, i * 40 + 130,
+                              text=xlabels[i], anchor='e')
     # X scale
     c.create_line(width/2, 100, width/2, 90)
     c.create_text(width/2, 85, text='0', anchor='s')
@@ -141,7 +157,7 @@ if __name__ == '__main__':
     infile.close()
     tk = Tk()
     width = int(sys.argv[2])
-    height = int(sys.argv[2])
+    height = int(sys.argv[3])
     c = Canvas(width=width, height=height)
     c.pack()
     c.bind_all('<KeyPress-Up>', scrollUp)
