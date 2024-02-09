@@ -34,11 +34,11 @@ def drawChart(svg, factor, chart):
     svg.write('<!DOCTYPE svg>\n<svg width="' + str(width) + '" height="' +
               str(height) + '" xmlns="http://www.w3.org/2000/svg">')
     svg.write('\n\t<text x="' + str(width/3) +
-              '" y="50" font-size="24" text-anchor="middle">&#8593; Factor ' +
-              str(all_indices[factor]) + ' &#8595;</text>')
+              '" y="50" font-size="24" text-anchor="middle">Factor ' +
+              str(all_indices[factor]) + '</text>')
     svg.write('\n\t<text x="' + str(2*width/3) +
-              '" y="50" font-size="24" text-anchor="middle">&#8592; ' + lab +
-              ' &#8594;</text>')
+              '" y="50" font-size="24" text-anchor="middle">' + lab +
+              '</text>')
     svg.write('\n\t<line x1="' + str(width/2) + '" y1="100" x2="' +
               str(width/2) + '" y2="' +
               str(height) + '" stroke="#000"/>')  # Center vertical line

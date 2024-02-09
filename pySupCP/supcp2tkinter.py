@@ -23,8 +23,9 @@ def scrollDown(event):
     global c
     global factor
     global chart
+    global mode
     factor += 1
-    drawChart(tk, c, factor, chart)
+    drawChart(tk, c, mode, factor, chart)
 
 
 def scrollUp(event):
@@ -32,9 +33,10 @@ def scrollUp(event):
     global c
     global factor
     global chart
+    global mode
     if factor > 0:
         factor -= 1
-    drawChart(tk, c, factor, chart)
+    drawChart(tk, c, mode, factor, chart)
 
 
 def scrollRight(event):
@@ -42,8 +44,9 @@ def scrollRight(event):
     global c
     global factor
     global chart
+    global mode
     chart += 1
-    drawChart(tk, c, factor, chart)
+    drawChart(tk, c, mode, factor, chart)
 
 
 def scrollLeft(event):
@@ -51,12 +54,23 @@ def scrollLeft(event):
     global c
     global factor
     global chart
+    global mode
     if chart > 0:
         chart -= 1
-    drawChart(tk, c, factor, chart)
+    drawChart(tk, c, mode, factor, chart)
 
 
-def drawChart(tk, c, factor, chart):
+def keyD(event):
+    global tk
+    global c
+    global factor
+    global chart
+    global mode
+    mode = (mode + 1) % 2
+    drawChart(tk, c, mode, factor, chart)
+
+
+def drawChart(tk, c, mode, factor, chart):
     """
     In this function, "factor" is the position within all_indices.
     """
@@ -65,56 +79,63 @@ def drawChart(tk, c, factor, chart):
     global all_indices
     global axes
     c.delete('all')
-    c.create_text(width/3, 50, anchor='s', font=('Helvetica', 24),
-                  text='\u2191 Factor ' + str(all_indices[factor]) + ' \u2193')
+    c.create_text(width/2, 50, anchor='s', font=('Helvetica', 24),
+                  text='[D]imensions')
+    if mode == 0 and chart in [0, 1, 2]:
+        x = V[chart][:, all_indices[factor]]
+        if chart == 0:
+            xlabels = axes['Feature']
+        elif chart == 1:
+            xlabels = axes['Channels']
+        elif chart == 2:
+            if len(x) == 7:
+                xlabels = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
+            else:
+                xlabels = ['d', 'th', 'al', 'be', 'g', 'g+']
+    elif mode == 1 and chart in [0, 1, 2]:
+        x = V[chart][factor, :]
+        xlabels = []
+        for a in all_indices:
+            xlabels.append('Factor ' + str(a))
+    if mode == 0:
+        c.create_text(width/4, 50, anchor='s', font=('Helvetica', 24),
+                      text='\u2191 Factor ' + str(all_indices[factor]) +
+                      ' \u2193')
+    elif mode == 1:
+        if chart == 0:
+            c.create_text(width/4, 50, anchor='s', font=('Helvetica', 24),
+                          text='\u2191 ' + axes['Feature'][factor] + ' \u2193')
+        elif chart == 1:
+            c.create_text(width/4, 50, anchor='s', font=('Helvetica', 24),
+                          text='\u2191 ' + axes['Channel'][factor] + ' \u2193')
+        elif chart == 2:
+            if V[2].shape[0] == 7:
+                topl = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
+            else:
+                topl = ['d', 'th', 'al', 'be', 'g', 'g+']
+            c.create_text(width/4, 50, anchor='s', font=('Helvetica', 24),
+                          text='\u2191 ' + topl[factor] + ' \u2193')
     if chart == 0:
         lab = 'Features'
     elif chart == 1:
         lab = 'Channels'
     elif chart == 2:
         lab = 'Frequency'
-    c.create_text(2*width/3, 50, anchor='s', font=('Helvetica', 24),
+    c.create_text(3*width/4, 50, anchor='s', font=('Helvetica', 24),
                   text='\u2190 ' + lab + ' \u2192')
     c.create_line(width/2, 100, width/2, height)  # Center vertical line
     c.create_line(0, 100, width, 100)  # Top horizontal line
-    if chart in [0, 1, 2]:
-        x = V[chart][:, all_indices[factor]]
     xscale = (width * 0.4) / max(max(x), abs(min(x)))
     # Bars
-    if chart == 0:
-        for i in range(len(x)):
-            c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
-                               i * 40 + 140, fill='#000')
-            if x[i] < 0:
-                c.create_text(width/2 + 5, i * 40 + 130,
-                              text=axes['Feature'][i], anchor='w')
-            else:
-                c.create_text(width/2 - 5, i * 40 + 130,
-                              text=axes['Feature'][i], anchor='e')
-    elif chart == 1:
-        for i in range(len(x)):
-            c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
-                               i * 40 + 140, fill='#000')
-            if x[i] < 0:
-                c.create_text(width/2 + 5, i * 40 + 130,
-                              text=axes['Channel'][i], anchor='w')
-            else:
-                c.create_text(width/2 - 5, i * 40 + 130,
-                              text=axes['Channel'][i], anchor='e')
-    elif chart == 2:
-        if len(x) == 7:
-            xlabels = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
+    for i in range(len(x)):
+        c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
+                            i * 40 + 140, fill='#000')
+        if x[i] < 0:
+            c.create_text(width/2 + 5, i * 40 + 130,
+                          text=xlabels[i], anchor='w')
         else:
-            xlabels = ['d', 'th', 'al', 'be', 'g', 'g+']
-        for i in range(len(x)):
-            c.create_rectangle(width/2, i * 40 + 120, width/2 + x[i] * xscale,
-                               i * 40 + 140, fill='#000')
-            if x[i] < 0:
-                c.create_text(width/2 + 5, i * 40 + 130,
-                              text=xlabels[i], anchor='w')
-            else:
-                c.create_text(width/2 - 5, i * 40 + 130,
-                              text=xlabels[i], anchor='e')
+            c.create_text(width/2 - 5, i * 40 + 130,
+                          text=xlabels[i], anchor='e')
     # X scale
     c.create_line(width/2, 100, width/2, 90)
     c.create_text(width/2, 85, text='0', anchor='s')
@@ -164,9 +185,12 @@ if __name__ == '__main__':
     c.bind_all('<KeyPress-Down>', scrollDown)
     c.bind_all('<KeyPress-Left>', scrollLeft)
     c.bind_all('<KeyPress-Right>', scrollRight)
+    c.bind_all('<KeyPress-d>', keyD)
+    c.bind_all('<KeyPress-D>', keyD)
     k = rank_indices[rank-1]
     factor = 0
     chart = 0
+    mode = 0
     for i in range(len(V)):
         for j in range(len(V[i])):
             V[i][j, k] = np.mean(V[i][j, 0:])
@@ -174,5 +198,5 @@ if __name__ == '__main__':
     all_indices[0] = k
     for i in range(1, rank):
         all_indices[i] = rank_indices[i-1]
-    drawChart(tk, c, factor, chart)
+    drawChart(tk, c, mode, factor, chart)
     input()
