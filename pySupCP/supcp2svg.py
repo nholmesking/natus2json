@@ -17,7 +17,7 @@ PEP-8 compliant.
 """
 
 
-def drawChart(svg, factor, chart):
+def drawChart(svg, mode, factor, chart):
     """
     In this function, "factor" is the position within all_indices.
     """
@@ -25,17 +25,51 @@ def drawChart(svg, factor, chart):
     global height
     global all_indices
     global axes
+    if mode == 0 and chart in [0, 1, 2]:
+        x = V[chart][:, all_indices[factor]]
+        if chart == 0:
+            xlabels = axes['Feature']
+        elif chart == 1:
+            xlabels = axes['Channel']
+        elif chart == 2:
+            if len(x) == 7:
+                xlabels = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
+            else:
+                xlabels = ['d', 'th', 'al', 'be', 'g', 'g+']
+    elif mode == 1 and chart in [0, 1, 2]:
+        x = V[chart][factor, :]
+        xlabels = []
+        for a in all_indices:
+            xlabels.append('Factor ' + str(a))
+    svg.write('<!DOCTYPE svg>\n<svg width="' + str(width) + '" height="' +
+              str(height) + '" xmlns="http://www.w3.org/2000/svg">')
+    if mode == 0:
+        svg.write('\n\t<text x="' + str(width/3) +
+                  '" y="50" font-size="24" text-anchor="middle">Factor ' +
+                  str(all_indices[factor]) + '</text>')
+    elif mode == 1:
+        if chart == 0:
+            svg.write('\n\t<text x="' + str(width/3) +
+                      '" y="50" font-size="24" text-anchor="middle"> ' +
+                      axes['Feature'][factor] + '</text>')
+        elif chart == 1:
+            svg.write('\n\t<text x="' + str(width/3) +
+                      '" y="50" font-size="24" text-anchor="middle"> ' +
+                      axes['Channel'][factor] + '</text>')
+        elif chart == 2:
+            if V[2].shape[0] == 7:
+                topl = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
+            else:
+                topl = ['d', 'th', 'al', 'be', 'g', 'g+']
+            svg.write('\n\t<text x="' + str(width/3) +
+                      '" y="50" font-size="24" text-anchor="middle"> ' +
+                      topl[factor] + '</text>')
     if chart == 0:
         lab = 'Features'
     elif chart == 1:
         lab = 'Channels'
     elif chart == 2:
         lab = 'Frequency'
-    svg.write('<!DOCTYPE svg>\n<svg width="' + str(width) + '" height="' +
-              str(height) + '" xmlns="http://www.w3.org/2000/svg">')
-    svg.write('\n\t<text x="' + str(width/3) +
-              '" y="50" font-size="24" text-anchor="middle">Factor ' +
-              str(all_indices[factor]) + '</text>')
     svg.write('\n\t<text x="' + str(2*width/3) +
               '" y="50" font-size="24" text-anchor="middle">' + lab +
               '</text>')
@@ -44,62 +78,23 @@ def drawChart(svg, factor, chart):
               str(height) + '" stroke="#000"/>')  # Center vertical line
     svg.write('\n\t<line x1="0" y1="100" x2="' + str(width) +
               '" y2="100" stroke="#000"/>')  # Top horizontal line
-    if chart in [0, 1, 2]:
-        x = V[chart][:, all_indices[factor]]
     xscale = (width * 0.4) / max(max(x), abs(min(x)))
     # Bars
-    if chart == 0:
-        for i in range(len(x)):
-            if x[i] < 0:
-                svg.write('\n\t<rect x="' + str(width/2 + x[i] * xscale) +
-                          '" y="' + str(i * 40 + 120) + '" width="' +
-                          str(-x[i] * xscale) + '" height="20" fill="#000"/>')
-                svg.write('\n\t<text x="' + str(width/2+5) + '" y="' +
-                          str(i * 40 + 135) + '" text-anchor="start">' +
-                          axes['Feature'][i] + '</text>')
-            else:
-                svg.write('\n\t<rect x="' + str(width/2) + '" y="' +
-                          str(i * 40 + 120) + '" width="' +
-                          str(x[i] * xscale) + '" height="20" fill="#000"/>')
-                svg.write('\n\t<text x="' + str(width/2-5) + '" y="' +
-                          str(i * 40 + 135) + '" text-anchor="end">' +
-                          axes['Feature'][i] + '</text>')
-    elif chart == 1:
-        for i in range(len(x)):
-            if x[i] < 0:
-                svg.write('\n\t<rect x="' + str(width/2 + x[i] * xscale) +
-                          '" y="' + str(i * 40 + 120) + '" width="' +
-                          str(-x[i] * xscale) + '" height="20" fill="#000"/>')
-                svg.write('\n\t<text x="' + str(width/2+5) + '" y="' +
-                          str(i * 40 + 135) + '" text-anchor="start">' +
-                          axes['Channel'][i] + '</text>')
-            else:
-                svg.write('\n\t<rect x="' + str(width/2) + '" y="' +
-                          str(i * 40 + 120) + '" width="' +
-                          str(x[i] * xscale) + '" height="20" fill="#000"/>')
-                svg.write('\n\t<text x="' + str(width/2-5) + '" y="' +
-                          str(i * 40 + 135) + '" text-anchor="end">' +
-                          axes['Channel'][i] + '</text>')
-    elif chart == 2:
-        if len(x) == 7:
-            xlabels = ['d-', 'd+', 'th', 'al', 'be', 'g', 'g+']
+    for i in range(len(x)):
+        if x[i] < 0:
+            svg.write('\n\t<rect x="' + str(width/2 + x[i] * xscale) +
+                      '" y="' + str(i * 40 + 120) + '" width="' +
+                      str(-x[i] * xscale) + '" height="20" fill="#000"/>')
+            svg.write('\n\t<text x="' + str(width/2+5) + '" y="' +
+                      str(i * 40 + 135) + '" text-anchor="start">' +
+                      xlabels[i] + '</text>')
         else:
-            xlabels = ['d', 'th', 'al', 'be', 'g', 'g+']
-        for i in range(len(x)):
-            if x[i] < 0:
-                svg.write('\n\t<rect x="' + str(width/2 + x[i] * xscale) +
-                          '" y="' + str(i * 40 + 120) + '" width="' +
-                          str(-x[i] * xscale) + '" height="20" fill="#000"/>')
-                svg.write('\n\t<text x="' + str(width/2+5) + '" y="' +
-                          str(i * 40 + 135) + '" text-anchor="start">' +
-                          xlabels[i] + '</text>')
-            else:
-                svg.write('\n\t<rect x="' + str(width/2) + '" y="' +
-                          str(i * 40 + 120) + '" width="' +
-                          str(x[i] * xscale) + '" height="20" fill="#000"/>')
-                svg.write('\n\t<text x="' + str(width/2-5) + '" y="' +
-                          str(i * 40 + 135) + '" text-anchor="end">' +
-                          xlabels[i] + '</text>')
+            svg.write('\n\t<rect x="' + str(width/2) + '" y="' +
+                      str(i * 40 + 120) + '" width="' + str(x[i] * xscale) +
+                      '" height="20" fill="#000"/>')
+            svg.write('\n\t<text x="' + str(width/2-5) + '" y="' +
+                      str(i * 40 + 135) + '" text-anchor="end">' +
+                      xlabels[i] + '</text>')
     # X scale
     svg.write('\n\t<line x1="' + str(width/2) + '" y1="100" x2="' +
               str(width/2) + '" y2="90" stroke="#000"/>')
@@ -162,5 +157,18 @@ if __name__ == '__main__':
         for chart in range(len(cl)):
             svg = open('chart_' + cl[chart] + '_F' + str(all_indices[factor]) +
                        '.svg', 'w')
-            drawChart(svg, factor, chart)
+            drawChart(svg, 0, factor, chart)
             svg.close()
+    for lb in range(len(axes['Feature'])):
+        svg = open('chart_Features_' + axes['Feature'][lb] + '.svg', 'w')
+        drawChart(svg, 1, lb, 0)
+        svg.close()
+    for lb in range(len(axes['Channel'])):
+        svg = open('chart_Channels_' + axes['Channel'][lb] + '.svg', 'w')
+        drawChart(svg, 1, lb, 1)
+        svg.close()
+    fr = ['d', 'th', 'al', 'be', 'g']
+    for lb in range(5):
+        svg = open('chart_Frequency_' + fr[lb] + '.svg', 'w')
+        drawChart(svg, 1, lb, 2)
+        svg.close()
