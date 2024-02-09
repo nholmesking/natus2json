@@ -50,11 +50,11 @@ def drawChart(svg, mode, factor, chart):
     elif mode == 1:
         if chart == 0:
             svg.write('\n\t<text x="' + str(width/3) +
-                      '" y="50" font-size="24" text-anchor="middle"> ' +
+                      '" y="50" font-size="24" text-anchor="middle">' +
                       axes['Feature'][factor] + '</text>')
         elif chart == 1:
             svg.write('\n\t<text x="' + str(width/3) +
-                      '" y="50" font-size="24" text-anchor="middle"> ' +
+                      '" y="50" font-size="24" text-anchor="middle">' +
                       axes['Channel'][factor] + '</text>')
         elif chart == 2:
             if V[2].shape[0] == 7:
@@ -62,7 +62,7 @@ def drawChart(svg, mode, factor, chart):
             else:
                 topl = ['d', 'th', 'al', 'be', 'g', 'g+']
             svg.write('\n\t<text x="' + str(width/3) +
-                      '" y="50" font-size="24" text-anchor="middle"> ' +
+                      '" y="50" font-size="24" text-anchor="middle">' +
                       topl[factor] + '</text>')
     if chart == 0:
         lab = 'Features'
