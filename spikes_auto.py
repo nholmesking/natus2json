@@ -2,9 +2,9 @@
 # 2024-02-14
 
 import quickspikes as qs
+import mne
 import sys
 import os
-from pydicom import dcmread
 
 """
 WORK IN PROGRESS.
@@ -18,22 +18,22 @@ PEP-8 compliant.
 
 def main(indir):
     for f in os.listdir(indir):
-        if f[len(f)-4:] != '.dcm':
+        try:
+            raw = mne.io.read_raw_edf(indir + '/' + f, preload=True,
+                                      verbose='ERROR')
+        except:
             continue
-        ds = dcmread(indir + '/' + f, force=True)
-        samples = []
-        for n in range(len(ds.WaveformSequence)):
-            a = ds.WaveformSequence[n]
-            k = (a.WaveformBitsAllocated // a.NumberOfWaveformChannels) // 8
-            for i in range(a.NumberOfWaveformChannels):
-                for j in range(a.NumberOfWaveformSamples):
-                    b = a.WaveformData[j*a.WaveformBitsAllocated // 8 + i*k:j *
-                                       a.WaveformBitsAllocated // 8 + i*k + k]
-                    samples.append(int.from_bytes(b, 'little'))
-                det = qs.detector(1000, 30)  # VERIFY numbers
-                times = det.send(samples)
-                print(f, n, a.ChannelDefinitionSequence[i].ChannelLabel,
-                      times)
+        channelNames = raw.ch_names
+        nch = len(channelNames)
+        srate = int(raw.info['sfreq'])
+        data, times = raw.get_data(return_times=True)
+        nch, nt = data.shape
+        det = qs.detector(1000, 30)
+        print(f)
+        for i in range(nch):
+            tm = det.send(data[i])
+            print(raw.ch_names[i], len(tm))
+        print('----')
 
 
 if __name__ == '__main__':
