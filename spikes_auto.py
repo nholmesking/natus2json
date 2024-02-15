@@ -27,10 +27,9 @@ def main(indir):
             k = (a.WaveformBitsAllocated // a.NumberOfWaveformChannels) // 8
             for i in range(a.NumberOfWaveformChannels):
                 for j in range(a.NumberOfWaveformSamples):
-                    samples.append(a.WaveformData[j*a.WaveformBitsAllocated //
-                                                  8+i*k:j *
-                                                  a.WaveformBitsAllocated//8 +
-                                                  i*k+k])
+                    b = a.WaveformData[j*a.WaveformBitsAllocated // 8+i*k:j *
+                                       a.WaveformBitsAllocated//8 + i*k+k]
+                    samples.append(int.from_bytes(b, 'little'))
                 det = qs.detector(1000, 30)  # VERIFY numbers
                 times = det.send(samples)
                 print(f, n, a.ChannelDefinitionSequence[i].ChannelLabel,
