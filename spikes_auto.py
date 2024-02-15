@@ -21,7 +21,11 @@ def main(indir):
         try:
             raw = mne.io.read_raw_edf(indir + '/' + f, preload=True,
                                       verbose='ERROR')
-        except:
+        except TypeError:
+            continue
+        except NotImplementedError:
+            continue
+        except ValueError:
             continue
         channelNames = raw.ch_names
         nch = len(channelNames)
