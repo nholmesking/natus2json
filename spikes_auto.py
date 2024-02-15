@@ -17,9 +17,10 @@ PEP-8 compliant.
 
 def main(indir):
     for f in os.listdir(indir):
-        infile = open(f, 'r')
+        edf = open(f, 'r')
         det = qs.detector(1000, 30)  # VERIFY numbers
-        times = det.send(infile)  # VERIFY
+        samples = []  # TEMP
+        times = det.send(samples)
         print(f, times)
 
 
