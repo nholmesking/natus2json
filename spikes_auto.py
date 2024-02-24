@@ -5,6 +5,7 @@ import quickspikes as qs
 import mne
 import sys
 import os
+import csv
 
 """
 WORK IN PROGRESS.
@@ -16,7 +17,10 @@ PEP-8 compliant.
 """
 
 
-def main(indir):
+def main(indir, outf):
+    outp = open(outf, 'w')
+    wrt = csv.writer(outp)
+    wrt.writerow(['File', 'Channel', 'Number of spikes'])
     for f in os.listdir(indir):
         try:
             raw = mne.io.read_raw_edf(indir + '/' + f, preload=True,
@@ -33,12 +37,11 @@ def main(indir):
         data, times = raw.get_data(return_times=True)
         nch, nt = data.shape
         det = qs.detector(1000, 30)
-        print(f)
         for i in range(nch):
             tm = det.send(data[i])
-            print(raw.ch_names[i], len(tm))
-        print('----')
+            wrt.writerow([f, raw.ch_names[i], len(tm)])
+    outp.close()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
