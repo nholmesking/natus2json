@@ -31,15 +31,15 @@ def main(indir, outf):
             continue
         except ValueError:
             continue
-        channelNames = raw.ch_names
-        nch = len(channelNames)
+        nch = len(raw.ch_names)
         srate = int(raw.info['sfreq'])
         data, times = raw.get_data(return_times=True)
         nch, nt = data.shape
-        det = qs.detector(1000, 30)
+        det = qs.detector(1000, 30)  # VERIFY
         for i in range(nch):
-            tm = det.send(data[i])
-            wrt.writerow([f, raw.ch_names[i], len(tm)])
+            if len(raw.ch_names[i]) > 2 and raw.ch_names[i][:3] == 'EEG':
+                tm = det.send(data[i])
+                wrt.writerow([f, raw.ch_names[i], len(tm)])
     outp.close()
 
 
