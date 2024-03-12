@@ -36,7 +36,7 @@ def findSpikesSciPy(raw, f, wrt):
     data, times = raw.get_data(return_times=True)
     for i in range(nch):
         if len(raw.ch_names[i]) > 2 and raw.ch_names[i][:3] == 'EEG':
-            peaks, _ = scipy.signal.find_peaks(data[i])
+            peaks, _ = scipy.signal.find_peaks(data[i], height=1e-3)
             wrt.writerow([f, raw.ch_names[i], len(peaks)])
 
 
