@@ -45,7 +45,7 @@ def findSpikesSciPy(raw, f, wrt, height=None, thresh=None, prom=None):
                                                threshold=thresh,
                                                prominence=prom)
             wrt.writerow([f, raw.ch_names[i], len(peaks)])
-            if (not f in bad) or (not raw.ch_names[i] in bad[f]):
+            if (f not in bad) or (raw.ch_names[i] not in bad[f]):
                 rl.append(len(peaks))
             """
             outfile = open('spikes_' + f + '_' + raw.ch_names[i] + '.svg', 'w')
