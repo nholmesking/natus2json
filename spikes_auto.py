@@ -73,7 +73,8 @@ def findSpikesSciPy(raw, f, wrt, height=None, thresh=None, prom=None):
 def main(indir, outf):
     tout = open(outf, 'w')
     rit = csv.writer(tout)
-    rit.writerow(['Height', 'Threshold', 'Prominence', 'Score'])
+    rit.writerow(['Height', 'Threshold', 'Prominence', 'Cutoff value',
+                  'Accuracy'])
     for h in [0, 1e-4, 2e-4, 5e-4, 1e-3]:
         for t in [0, 1e-4, 2e-4, 5e-4, 1e-3]:
             for p in [0, 1e-4, 2e-4, 5e-4, 1e-3]:
@@ -103,8 +104,18 @@ def main(indir, outf):
                         for a in rl:
                             dic[False].append(a)
                 outp.close()
-                rit.writerow([h, t, p, np.log(np.mean(dic[True]) /
-                                              np.mean(dic[False]))])
+                max_thresh = (0, 0)
+                al = np.array(dic[True] + dic[False])
+                al = np.unique(al)
+                al.sort()
+                dt = np.array(dic[True])
+                df = np.array(dic[False])
+                for v in al:
+                    acc = ((len(dt[dt >= v]) + len(df[df < v])) /
+                           (len(dt) + len(df)))
+                    if acc > max_thresh[1]:
+                        max_thresh = (v, acc)
+                rit.writerow([h, t, p, max_thresh[0], max_thresh[1]])
     tout.close()
 
 
