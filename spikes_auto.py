@@ -78,6 +78,8 @@ def main(indir, outf):
     for h in [0, 1e-4, 2e-4, 5e-4, 1e-3]:
         for t in [0, 1e-4, 2e-4, 5e-4, 1e-3]:
             for p in [0, 1e-4, 2e-4, 5e-4, 1e-3]:
+                if t > p:
+                    continue
                 dic = {True: [], False: []}
                 outp = open('spikes_' + str(h) + '_' + str(t) + '_' + str(p) +
                             '.csv', 'w')
@@ -98,11 +100,9 @@ def main(indir, outf):
                                          prom=p)
                     print('DONE', h, t, p, f)
                     if int(f.split('.')[0].split('-')[1]) < 40:
-                        for a in rl:
-                            dic[True].append(a)
+                        dic[True].append(max(rl))
                     else:
-                        for a in rl:
-                            dic[False].append(a)
+                        dic[False].append(max(rl))
                 outp.close()
                 max_thresh = (0, 0)
                 al = np.array(dic[True] + dic[False])
