@@ -41,11 +41,13 @@ def main(fname, folder, rn):
         i = 0
         while i < len(raw.ch_names):
             print(f, raw.ch_names[i])  # TEMP
-            s = input('Spikes? ')
-            if len(s) > 0 and s[0].lower() in ['t', 'y']:
+            s = input('Spikes? ([T]rue / [F]alse / [B]ad data) ')
+            if len(s) > 0 and s[0].lower() == 't':  # Spikes
                 wrt.writerow([rn, f, raw.ch_names[i], True])
-            elif len(s) > 0 and s[0].lower() in ['f', 'n']:
+            elif len(s) > 0 and s[0].lower() == 'f':  # No spikes
                 wrt.writerow([rn, f, raw.ch_names[i], False])
+            elif len(s) > 0 and s[0].lower() == 'b':  # Bad data
+                wrt.writerow([rn, f, raw.ch_names[i], None])
             else:
                 print('ERROR! Invalid response.')
                 i -= 1
