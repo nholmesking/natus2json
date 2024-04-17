@@ -27,7 +27,8 @@ def main(fname, folder, rn):
     except FileNotFoundError:
         infile = open(fname, 'w')
         wrt = csv.writer(infile)
-        wrt.writerow(['Reviewer', 'File', 'Channel', 'Spikes'])
+        wrt.writerow(['Reviewer', 'File', 'Channel', 'Start time', 'End time',
+                      'Spikes'])
     for f in os.listdir(folder):
         try:
             raw = mne.io.read_raw_edf(folder + '/' + f, preload=True,
@@ -38,19 +39,25 @@ def main(fname, folder, rn):
             continue
         except ValueError:
             continue
+        data, times = raw.get_data(return_times=True)
         i = 0
         while i < len(raw.ch_names):
-            print(f, raw.ch_names[i])  # TEMP
-            s = input('Spikes? ([T]rue / [F]alse / [B]ad data) ')
-            if len(s) > 0 and s[0].lower() == 't':  # Spikes
-                wrt.writerow([rn, f, raw.ch_names[i], True])
-            elif len(s) > 0 and s[0].lower() == 'f':  # No spikes
-                wrt.writerow([rn, f, raw.ch_names[i], False])
-            elif len(s) > 0 and s[0].lower() == 'b':  # Bad data
-                wrt.writerow([rn, f, raw.ch_names[i], None])
-            else:
-                print('ERROR! Invalid response.')
-                i -= 1
+            j = 0
+            while j < len(times):
+                tr = (times[j], times[int(min(j+1e5, len(times)-1))])
+                print(f, raw.ch_names[i], tr[0], tr[1])  # TEMP
+                s = input('Spikes? ([T]rue / [F]alse / [B]ad data) ')
+                if len(s) > 0 and s[0].lower() == 't':  # Spikes
+                    wrt.writerow([rn, f, raw.ch_names[i], tr[0], tr[1], True])
+                elif len(s) > 0 and s[0].lower() == 'f':  # No spikes
+                    wrt.writerow([rn, f, raw.ch_names[i], tr[0], tr[1], False])
+                elif len(s) > 0 and s[0].lower() == 'b':  # Bad data
+                    wrt.writerow([rn, f, raw.ch_names[i], tr[0], tr[1], None])
+                else:
+                    print('ERROR! Invalid response.')
+                    j -= 1e5
+                j += 1e5
+                j = int(j)
             i += 1
     infile.close()
 
