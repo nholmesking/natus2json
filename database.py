@@ -3,6 +3,7 @@
 
 import csv
 import mne
+import os
 import sys
 
 """
@@ -18,11 +19,18 @@ PEP-8 compliant.
 
 
 def main(fname, folder, rn):
-    infile = open(fname, 'a')
-    wrt = csv.writer(infile)
+    try:
+        infile = open(fname, 'r')
+        infile.close()
+        infile = open(fname, 'a')
+        wrt = csv.writer(infile)
+    except FileNotFoundError:
+        infile = open(fname, 'w')
+        wrt = csv.writer(infile)
+        wrt.writerow(['Reviewer', 'File', 'Channel', 'Spikes'])
     for f in os.listdir(folder):
         try:
-            raw = mne.io.read_raw_edf(indir + '/' + f, preload=True,
+            raw = mne.io.read_raw_edf(folder + '/' + f, preload=True,
                                       verbose='ERROR')
         except TypeError:
             continue
