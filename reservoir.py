@@ -18,6 +18,9 @@ PEP-8 compliant.
 """
 
 
+std_ch = ['EEG F3-M2', 'EEG F4-M1', 'EEG T3-M2', 'EEG T4-M1']
+
+
 def main(indir):
     X = []
     y = []
@@ -36,11 +39,15 @@ def main(indir):
         data, times = raw.get_data(return_times=True)
         # Filter out non-EEG channels
         Xtemp = []
-        print(f)  # DEBUG
-        for i in range(nch):
-            if len(raw.ch_names[i]) > 2 and raw.ch_names[i][:3] == 'EEG':
-                Xtemp.append(data[i])
-                print(raw.ch_names[i])  # DEBUG
+        for a in std_ch:
+            g = True
+            for i in range(nch):
+                if raw.ch_names[i] == a:
+                    Xtemp.append(np.array(data[i]))
+                    g = False
+                    break
+            if g:
+                Xtemp.append(np.zeros(raw.n_times))
         X.append(np.array(Xtemp))
         # Spikes or not?
         if int(f.split('.')[0][4:]) > 40:
