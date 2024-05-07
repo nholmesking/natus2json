@@ -5,23 +5,31 @@ import mne
 import numpy as np
 import os
 from pyrcn.echo_state_network import ESNClassifier
+from reservoirpy.nodes import Reservoir, Ridge
 from sklearn.model_selection import train_test_split
 import sys
+import time
 
 """
 WORK IN PROGRESS.
 
 Command-line arguments:
 1. Directory
+2. Python module (PyRCN, reservoirpy)
 
 PEP-8 compliant.
 """
 
 
 std_ch = ['EEG F3-M2', 'EEG F4-M1', 'EEG T3-M2', 'EEG T4-M1']
+valid_mod = ['pyrcn', 'reservoirpy']
 
 
-def main(indir):
+def main(indir, mod):
+    t = time.time()
+    if mod not in valid_mod:
+        print('ERROR! Invalid module name.')
+        return
     X = []
     y = []
     max_len = 0
@@ -36,6 +44,7 @@ def main(indir):
             continue
         except ValueError:
             continue
+        print('Read file', f, '|', time.time() - t, 's')
         nch = len(raw.ch_names)
         data, times = raw.get_data(return_times=True)
         # Filter out non-EEG channels
@@ -59,24 +68,39 @@ def main(indir):
         if raw.n_times > max_len:
             max_len = raw.n_times
     # Final pre-processing
+    print('Final pre-processing |', time.time() - t, 's')
     for i in range(len(X)):
         if X[i].shape[1] < max_len:
             X[i] = np.append(X[i], np.zeros((X[i].shape[0],
                                              max_len-X[i].shape[1])), axis=1)
-    newX = np.empty(shape=(len(X),), dtype=object)
-    newY = np.empty(shape=(len(y),), dtype=object)
-    for i in range(len(X)):
-        newX[i] = X[i]
-        newY[i] = y[i]
-    X = newX
-    y = newY
+    if mod == 'pyrcn':
+        newX = np.empty(shape=(len(X),), dtype=object)
+        newY = np.empty(shape=(len(y),), dtype=object)
+        for i in range(len(X)):
+            newX[i] = X[i]
+            newY[i] = y[i]
+        X = newX
+        y = newY
+    elif mod == 'reservoirpy':
+        X = np.array(X)
+        y = np.array(y)
     # Train model
+    print('Train model |', time.time() - t, 's')
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
-    clf = ESNClassifier()
-    clf.fit(X=X_train, y=y_train)
-    y_pred_classes = clf.predict(X=X_test)
-    print('test', y_test, y_pred_classes == y_test)
+    print(X_train.shape, y_train.shape)
+    if mod == 'pyrcn':
+        clf = ESNClassifier()
+        clf.fit(X=X_train, y=y_train)
+        y_pred = clf.predict(X=X_test)
+        print(y_test, y_pred)  # TEMP
+    elif mod == 'reservoirpy':
+        reservoir = Reservoir(units=100, lr=0.3, sr=1.25)
+        readout = Ridge(output_dim=1, ridge=1e-5)
+        esn = reservoir >> readout
+        esn.fit(X_train, y_train)
+        y_pred = esn.run(X_test)
+        print(y_test, y_pred)  # TEMP
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2].lower())
